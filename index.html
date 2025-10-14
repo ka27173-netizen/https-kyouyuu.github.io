@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情報共有ページ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* カスタムスタイル */
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc; /* Tailwindのgray-50 */
+        }
+        /* 横スクロールコンテナのスクロールバーを非表示にし、スナップを効かせる */
+        .calendar-scroll-container {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            scroll-snap-type: x mandatory;
+        }
+        .calendar-scroll-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, and Opera */
+        }
+        .calendar-month {
+            scroll-snap-align: center;
+        }
+        /* イベント用の基本スタイル */
+        .event {
+            font-size: 0.75rem; /* 12px */
+            padding: 2px 4px;
+            margin-top: 4px;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border: 1px solid transparent;
+        }
+        /* 通常の予定 */
+        .event-normal {
+            background-color: #e0e7ff; /* indigo-100 */
+            color: #3730a3; /* indigo-800 */
+            border-color: #c7d2fe; /* indigo-200 */
+        }
+        /* 土曜日の予定 */
+        .event-saturday {
+            background-color: #cffafe; /* cyan-100 */
+            color: #0e7490; /* cyan-700 */
+            border-color: #a5f3fc; /* cyan-200 */
+        }
+        /* 優先度高の予定（オレンジ） */
+        .event-high-priority {
+            background-color: #fffbeb; /* amber-50 */
+            color: #b45309; /* amber-700 */
+            border-color: #fde68a; /* amber-200 */
+        }
+        /* 大事な予定（黒） */
+        .event-important {
+            background-color: #1f2937; /* gray-800 */
+            color: #f9fafb; /* gray-50 */
+        }
+        /* 過去の日のイベント */
+        .past-day .event-normal, .past-day .event-saturday, .past-day .event-high-priority {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #6b7280; /* gray-500 */
+            border-color: #d1d5db; /* gray-300 */
+        }
+         .past-day .event-important {
+            background-color: #6b7280; /* gray-500 */
+            color: #d1d5db; /* gray-300 */
+        }
+        /* ToDoリストのスタイル */
+        .todo-item.completed .todo-text, .todo-item.completed .due-date-badge {
+            text-decoration: line-through;
+            color: #9ca3af; /* gray-400 */
+        }
+        .assignee-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-weight: 500;
+            color: white;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="text-gray-800 pt-16">
+
+    <header class="bg-white shadow-md fixed top-0 left-0 right-0 z-10">
+        <div class="container mx-auto px-4 md:px-8 max-w-7xl">
+            <nav class="flex justify-between items-center h-16">
+                <div class="text-xl font-bold text-indigo-600">
+                    情報共有ページ
+                </div>
+                <div class="space-x-4 md:space-x-8">
+                    <a href="#notifications" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">連絡事項</a>
+                    <a href="#todo-list" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">ToDo</a>
+                    <a href="#calendar" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">カレンダー</a>
+                    <a href="#links" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">リンク</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- 1. 連絡したいこと -->
+        <section id="notifications" class="mb-8 md:mb-12 pt-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                連絡事項
+            </h2>
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-yellow-400">
+                    <p class="font-semibold text-gray-800">
+                        【重要】<a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">今年度のスケジュール</a>
+                        <span class="text-sm text-gray-600 font-normal ml-4">このページのパスワード 280075Wgq2</span>
+                    </p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <p class="font-semibold text-gray-800">【重要】明日(10/13)web会議します</p>
+                    <p class="text-sm text-gray-600 mt-1">四時ちょっと前にリンク投げるからそこから入ってね</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <p class="font-semibold text-gray-800">スライド・スライド原稿</p>
+                    <p class="text-sm text-gray-600 mt-1">ぱぱっとと終わらせてHP改善したいです</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <p class="font-semibold text-gray-800">ファイル構成を変更します</p>
+                    <p class="text-sm text-gray-600 mt-1">トップページをindex.htmlホームボタンを押して飛ぶトップページをhome.htmlにする予定です</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1.5 ToDoリスト -->
+        <section id="todo-list" class="mb-8 md:mb-12 pt-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                ToDoリスト
+            </h2>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <!-- Input Form -->
+                <div class="flex flex-col sm:flex-row flex-wrap gap-4 mb-6 pb-6 border-b border-gray-200">
+                    <input type="text" id="todo-input" placeholder="新しいタスクを入力..." class="flex-grow border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto">
+                    <select id="todo-assignee" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="モリヤ">モリヤ</option>
+                        <option value="モリナガ">モリナガ</option>
+                        <option value="シミズ">シミズ</option>
+                        <option value="スギタニ">スギタニ</option>
+                        <option value="ウエダ">ウエダ</option>
+                    </select>
+                    <input type="date" id="todo-due-date" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <button id="add-todo-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform duration-150 active:scale-95">追加</button>
+                </div>
+                <!-- Filter -->
+                <div class="flex justify-end mb-4">
+                    <label for="todo-filter" class="mr-2 text-sm font-medium text-gray-700 self-center">表示する担当者:</label>
+                    <select id="todo-filter" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                        <option value="全員">全員</option>
+                        <option value="モリヤ">モリヤ</option>
+                        <option value="モリナガ">モリナガ</option>
+                        <option value="シミズ">シミズ</option>
+                        <option value="スギタニ">スギタニ</option>
+                        <option value="ウエダ">ウエダ</option>
+                    </select>
+                </div>
+                <!-- ToDo List Container -->
+                <ul id="todo-list-container" class="space-y-3">
+                    <!-- ToDo items will be generated here by JS -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- 2. カレンダー機能 -->
+        <section id="calendar" class="mb-8 md:mb-12 pt-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect><line x1="16" x2="16" y1="2" y2="6"></line><line x1="8" x2="8" y1="2" y2="6"></line><line x1="3" x2="21" y1="10" y2="10"></line></svg>
+                    カレンダー
+                </h2>
+                <div class="flex space-x-2">
+                    <button id="prev-month" class="bg-indigo-600 text-white p-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform duration-150 active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+                    </button>
+                    <button id="next-month" class="bg-indigo-600 text-white p-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform duration-150 active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="calendar-scroll-container" class="calendar-scroll-container flex overflow-x-auto bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+                <!-- カレンダーがここに動的に生成されます -->
+            </div>
+        </section>
+
+        <!-- 3. リンク一覧 -->
+        <section id="links" class="pt-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+                リンク一覧
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 僕らが作ってるHP -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 md:col-span-2 lg:col-span-3">
+                    <h3 class="text-xl font-semibold text-indigo-700 mb-3">僕らが作ってるHP</h3>
+                    <ul class="space-y-2">
+                        <li><a href="file:///media/fuse/drivefs-ab8b5b3ed99213de07f5b56a773760e8/team_drives/%E4%B8%AD%E5%AD%A6%E6%8A%80%E8%A1%93%E7%A7%91%EF%BC%8BWeb%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/2025%E4%B8%AD2Web%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/25B07%E5%AE%88%E5%B1%8B%E5%B4%87%E7%A7%80/Actualperformance/top.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">トップページへ <span class="ml-1 text-xs">↗</span></a></li>
+                    </ul>
+                </div>
+                <!-- ドキュメント -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-xl font-semibold text-blue-700 mb-3">ドキュメント</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://docs.google.com/document/d/1H4mZVyTgOn_uucbsnx7yhpFL7TuT84JS1XSJW9t7OLg/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">HPに書く内容<span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="https://docs.google.com/document/d/1-p__bNjTk10BAiD1SSX4QLftd-tIYb_sD8ZLX6EtorY/edit?tab=t.0" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">B07発表原稿シート<span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="https://docs.google.com/document/d/1NS0wGDr8qWzUCs2MoJXeUxpnOkt1ux-q8kaGvXJK6Jc/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">スライドの原稿　大まかな内容<span class="ml-1 text-xs">↗</span></a></li>
+                    </ul>
+                </div>
+                <!-- スライド -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-xl font-semibold text-orange-600 mb-3">スライド</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://docs.google.com/presentation/d/1uk0yrDRlRE3riRvJ-Y7oLR537nh-eqgjAsGSlfsjHuE/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">B07発表スライド <span class="ml-1 text-xs">↗</span></a></li>
+                    </ul>
+                </div>
+                <!-- スプレッドシート -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-xl font-semibold text-green-700 mb-3">スプレッドシート</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">プロジェクト進捗管理表 <span class="ml-1 text-xs">↗</span></a></li>
+                    </ul>
+                </div>
+                <!-- フォーム -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3">フォーム</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">経費精算申請 <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">休暇申請フォーム <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">アンケートフォーム <span class="ml-1 text-xs">↗</span></a></li>
+                    </ul>
+                </div>
+                <!-- よく使いそうなサイト -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-xl font-semibold text-teal-700 mb-3">よく使いそうなサイト</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">社内ポータル <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">勤怠管理システム <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">Webメール <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">チャットツール <span class="ml-1 text-xs">↗</span></a></li>
+                    </ul>
+                </div>
+                <!-- その他 -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-xl font-semibold text-gray-600 mb-3">その他</h3>
+                    <ul class="space-y-2">
+                         <li><a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">今年度のスケジュール<span class="ml-1 text-xs">↗</span></a></li>
+                         <li><a href="https://webcon.japias.jp/rule.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">webコンルール<span class="ml-1 text-xs">↗</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+<script type="module">
+    // --- Firebase SDKのインポート ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- Firebaseの初期化 ---
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO", authDomain: "DEMO", projectId: "DEMO" };
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // --- ToDoリスト機能 ---
+    const todoInput = document.getElementById('todo-input');
+    const todoAssignee = document.getElementById('todo-assignee');
+    const todoDueDate = document.getElementById('todo-due-date');
+    const addTodoBtn = document.getElementById('add-todo-btn');
+    const todoListContainer = document.getElementById('todo-list-container');
+    const todoFilter = document.getElementById('todo-filter');
+    
+    const assigneeColors = {
+        'モリヤ': 'bg-red-500',
+        'モリナガ': 'bg-blue-500',
+        'シミズ': 'bg-green-500',
+        'スギタニ': 'bg-yellow-500',
+        'ウエダ': 'bg-purple-500'
+    };
+
+    let todosCollection;
+
+    // --- 認証とデータ取得の開始 ---
+    async function initializeAppWithAuth() {
+        try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+            console.log("Authenticated successfully.");
+            
+            // 認証後にコレクション参照を設定
+            todosCollection = collection(db, `/artifacts/${appId}/public/data/todos`);
+            
+            // リアルタイムリスナーを設定
+            onSnapshot(todosCollection, (snapshot) => {
+                const todos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderTodos(todos);
+            });
+
+        } catch (error) {
+            console.error("Authentication or data fetching failed:", error);
+            todoListContainer.innerHTML = `<p class="text-red-500">データの読み込みに失敗しました。</p>`;
+        }
+    }
+
+    const renderTodos = (todos) => {
+        const filterValue = todoFilter.value;
+        let filteredTodos = [...todos];
+
+        if (filterValue !== '全員') {
+            filteredTodos = filteredTodos.filter(todo => todo.assignee === filterValue);
+        }
+
+        filteredTodos.sort((a, b) => {
+            if (a.completed !== b.completed) return a.completed ? 1 : -1;
+            const dateA = a.dueDate ? new Date(a.dueDate + 'T00:00:00') : null;
+            const dateB = b.dueDate ? new Date(b.dueDate + 'T00:00:00') : null;
+            if (dateA && dateB) return dateA - dateB;
+            if (dateA) return -1;
+            if (dateB) return 1;
+            // createdAt フィールドが存在すればそれに基づきソート、なければIDでソート
+            const timeA = a.createdAt?.seconds || parseInt(a.id.substring(0, 8), 16);
+            const timeB = b.createdAt?.seconds || parseInt(b.id.substring(0, 8), 16);
+            return timeB - timeA;
+        });
+        
+        todoListContainer.innerHTML = '';
+        if (filteredTodos.length === 0) {
+            todoListContainer.innerHTML = `<p class="text-gray-500">タスクはありません。</p>`;
+            return;
+        }
+
+        filteredTodos.forEach(todo => {
+            const li = document.createElement('li');
+            li.className = `todo-item flex items-center justify-between p-3 rounded-md border ${todo.completed ? 'completed bg-gray-50' : 'bg-white'}`;
+            li.dataset.id = todo.id;
+
+            const color = assigneeColors[todo.assignee] || 'bg-gray-500';
+            
+            let dueDateHtml = '';
+            if (todo.dueDate) {
+                const dueDate = new Date(todo.dueDate + 'T00:00:00');
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                let dateColor = 'text-gray-500';
+                if (!todo.completed && dueDate < today) {
+                    dateColor = 'text-red-500 font-semibold';
+                }
+                
+                const formattedDate = dueDate.toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' });
+                dueDateHtml = `<span class="due-date-badge text-xs mr-3 ${dateColor}">期日: ${formattedDate}</span>`;
+            }
+
+            li.innerHTML = `
+                <div class="flex items-center flex-grow">
+                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 flex-shrink-0" ${todo.completed ? 'checked' : ''}>
+                    <span class="todo-text ml-4 text-gray-800">${todo.text}</span>
+                </div>
+                <div class="flex items-center flex-shrink-0">
+                    ${dueDateHtml}
+                    <span class="assignee-badge ${color}">${todo.assignee}</span>
+                    <button class="delete-todo-btn ml-4 text-gray-400 hover:text-red-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
+                </div>
+            `;
+            todoListContainer.appendChild(li);
+        });
+    };
+
+    addTodoBtn.addEventListener('click', async () => {
+        const text = todoInput.value.trim();
+        if (text && todosCollection) {
+            await addDoc(todosCollection, {
+                text: text,
+                assignee: todoAssignee.value,
+                dueDate: todoDueDate.value,
+                completed: false,
+                createdAt: serverTimestamp()
+            });
+            todoInput.value = '';
+            todoDueDate.value = '';
+        }
+    });
+    
+    todoFilter.addEventListener('change', () => {
+        // Just trigger a re-render with the current local data, which is kept up-to-date by onSnapshot
+         onSnapshot(todosCollection, (snapshot) => {
+                const todos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderTodos(todos);
+         });
+    });
+
+    todoInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            addTodoBtn.click();
+        }
+    });
+
+    todoListContainer.addEventListener('click', async (e) => {
+        const target = e.target;
+        const parentLi = target.closest('.todo-item');
+        if (!parentLi || !todosCollection) return;
+        
+        const todoId = parentLi.dataset.id;
+        const todoRef = doc(todosCollection, todoId);
+
+        if (target.type === 'checkbox') {
+            await updateDoc(todoRef, {
+                completed: target.checked
+            });
+        } else if (target.closest('.delete-todo-btn')) {
+            await deleteDoc(todoRef);
+        }
+    });
+
+    // --- カレンダー機能（変更なし）---
+    const calendarContainer = document.getElementById('calendar-scroll-container');
+    const prevButton = document.getElementById('prev-month');
+    const nextButton = document.getElementById('next-month');
+    const holidays = [
+        { year: 2025, month: 10, day: 3, name: '文化の日' },
+        { year: 2025, month: 10, day: 24, name: '振替休日' },
+        { year: 2026, month: 0, day: 1, name: '元日' },
+        { year: 2026, month: 0, day: 12, name: '成人の日' },
+        { year: 2026, month: 1, day: 11, name: '建国記念の日' },
+        { year: 2026, month: 1, day: 23, name: '天皇誕生日' },
+        { year: 2026, month: 2, day: 20, name: '春分の日' },
+    ];
+    const events = [
+        { year: 2025, month: 9, day: 13, title: 'Web会議(4時頃〜)', type: 'high-priority' },
+        { year: 2025, month: 9, day: 25, title: '運動会', type: 'high-priority' },
+        { year: 2025, month: 10, day: 2, title: 'エコチル調査発表', type: 'important' },
+        { year: 2025, month: 10, day: 6, title: '芸術鑑賞会', type: 'high-priority' },
+        { year: 2025, month: 10, day: 8, title: '探求Day(モリヤ無し)', type: 'important' },
+        { year: 2025, month: 11, day: 2, title: '後期中間考査', type: 'high-priority' },
+        { year: 2025, month: 11, day: 3, title: '後期中間考査', type: 'high-priority' },
+        { year: 2025, month: 11, day: 4, title: '後期中間考査', type: 'high-priority' },
+        { year: 2025, month: 11, day: 12, title: '合唱祭', type: 'high-priority' }
+    ];
+    const startDate = new Date(2025, 9, 1);
+    const endDate = new Date(2026, 2, 1);
+
+    function createMonthCalendar(year, month) {
+        const monthDiv = document.createElement('div');
+        monthDiv.className = 'calendar-month flex-shrink-0 w-full p-2';
+        const monthName = new Date(year, month).toLocaleString('ja-JP', { year: 'numeric', month: 'long' });
+        let html = `<div class="text-center mb-4"><h3 class="text-xl font-semibold">${monthName}</h3></div>`;
+        html += '<table class="w-full text-sm text-center border-collapse table-fixed">';
+        html += '<thead><tr class="text-gray-600">';
+        const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        weekdays.forEach((day, i) => {
+            let colorClass = '';
+            if (i === 0) colorClass = 'text-red-500';
+            if (i === 6) colorClass = 'text-blue-500';
+            html += `<th class="p-2 w-1/7 border-b ${colorClass}">${day}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let date = 1;
+        for (let i = 0; i < 6; i++) {
+            html += '<tr>';
+            for (let j = 0; j < 7; j++) {
+                if (i === 0 && j < firstDay || date > daysInMonth) {
+                    html += '<td class="border p-1"></td>';
+                } else {
+                    const currentDate = new Date(year, month, date);
+                    currentDate.setHours(0, 0, 0, 0);
+                    let tdClass = '', dateDivClass = '', dateTextClass = '', holidayName = '';
+                    const isPast = currentDate < today;
+                    const isToday = currentDate.getTime() === today.getTime();
+                    const dayOfWeek = currentDate.getDay();
+                    const holiday = holidays.find(h => h.year === year && h.month === month && h.day === date);
+                    const isSportsDay = year === 2025 && month === 9 && date === 13;
+                    const isHoliday = holiday || isSportsDay;
+
+                    if (holiday) {
+                        const holidayTextColor = isPast ? 'text-gray-400' : 'text-red-700';
+                        holidayName = `<div class="text-xs ${holidayTextColor} truncate">${holiday.name}</div>`;
+                    } else if (isSportsDay) {
+                        const holidayTextColor = isPast ? 'text-gray-400' : 'text-red-700';
+                        holidayName = `<div class="text-xs ${holidayTextColor} truncate">スポーツの日</div>`;
+                    }
+                    
+                    if (isHoliday) tdClass = 'bg-red-100';
+                    else if (dayOfWeek === 0) tdClass = 'bg-red-100';
+                    else if (dayOfWeek === 6) tdClass = 'bg-blue-100';
+
+                    if (isPast) {
+                        tdClass += ' past-day';
+                        dateTextClass = 'text-gray-400';
+                    } else {
+                        if (isHoliday) dateTextClass = 'text-red-700';
+                        else if (dayOfWeek === 0) dateTextClass = 'text-red-500';
+                        else if (dayOfWeek === 6) dateTextClass = 'text-blue-500';
+                        else dateTextClass = 'text-gray-800';
+                    }
+
+                    if (isToday) {
+                        dateDivClass = 'bg-indigo-600 rounded-full';
+                        dateTextClass = 'text-white font-bold';
+                    }
+                    
+                    const dayEvents = events.filter(e => e.year === year && e.month === month && e.day === date);
+                    const isNotNov8th = !(year === 2025 && month === 10 && date === 8);
+                    const isNotOct25th = !(year === 2025 && month === 9 && date === 25);
+                    if (dayOfWeek === 6 && isNotNov8th && isNotOct25th) {
+                        dayEvents.push({ title: 'Worldday', type: 'saturday' });
+                    }
+                    let eventHtml = dayEvents.map(e => {
+                        let eventClass = '';
+                        switch(e.type) {
+                            case 'important': eventClass = 'event-important'; break;
+                            case 'high-priority': eventClass = 'event-high-priority'; break;
+                            case 'saturday': eventClass = 'event-saturday'; break;
+                            default: eventClass = 'event-normal';
+                        }
+                        return `<div class="event ${eventClass}" title="${e.title}">${e.title}</div>`;
+                    }).join('');
+                    html += `<td class="border p-1 h-24 align-top ${tdClass.trim()}">
+                                <div class="w-7 h-7 mx-auto flex items-center justify-center ${dateDivClass}">
+                                    <span class="font-medium ${dateTextClass}">${date}</span>
+                                </div>
+                                ${holidayName}
+                                ${eventHtml}
+                             </td>`;
+                    date++;
+                }
+            }
+            html += '</tr>';
+            if (date > daysInMonth) break;
+        }
+        html += '</tbody></table>';
+        monthDiv.innerHTML = html;
+        return monthDiv;
+    }
+
+    let calDate = new Date(startDate);
+    while (calDate <= endDate) {
+        const monthCalendar = createMonthCalendar(calDate.getFullYear(), calDate.getMonth());
+        calendarContainer.appendChild(monthCalendar);
+        calDate.setMonth(calDate.getMonth() + 1);
+    }
+    const scrollMonth = () => calendarContainer.querySelector('.calendar-month').offsetWidth;
+    nextButton.addEventListener('click', () => calendarContainer.scrollBy({ left: scrollMonth(), behavior: 'smooth' }));
+    prevButton.addEventListener('click', () => calendarContainer.scrollBy({ left: -scrollMonth(), behavior: 'smooth' }));
+    
+    // --- 初期化処理の呼び出し ---
+    initializeAppWithAuth();
+</script>
+</body>
+</html>
+
