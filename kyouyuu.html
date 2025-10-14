@@ -71,19 +71,6 @@
             background-color: #6b7280; /* gray-500 */
             color: #d1d5db; /* gray-300 */
         }
-        /* ToDoリストのスタイル */
-        .todo-item.completed .todo-text, .todo-item.completed .due-date-badge {
-            text-decoration: line-through;
-            color: #9ca3af; /* gray-400 */
-        }
-        .assignee-badge {
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-weight: 500;
-            color: white;
-            white-space: nowrap;
-        }
     </style>
 </head>
 <body class="text-gray-800 pt-16">
@@ -96,7 +83,6 @@
                 </div>
                 <div class="space-x-4 md:space-x-8">
                     <a href="#notifications" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">連絡事項</a>
-                    <a href="#todo-list" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">ToDo</a>
                     <a href="#calendar" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">カレンダー</a>
                     <a href="#links" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">リンク</a>
                 </div>
@@ -131,45 +117,6 @@
                     <p class="font-semibold text-gray-800">ファイル構成を変更します</p>
                     <p class="text-sm text-gray-600 mt-1">トップページをindex.htmlホームボタンを押して飛ぶトップページをhome.htmlにする予定です</p>
                 </div>
-            </div>
-        </section>
-
-        <!-- 1.5 ToDoリスト -->
-        <section id="todo-list" class="mb-8 md:mb-12 pt-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                ToDoリスト
-            </h2>
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                <!-- Input Form -->
-                <div class="flex flex-col sm:flex-row flex-wrap gap-4 mb-6 pb-6 border-b border-gray-200">
-                    <input type="text" id="todo-input" placeholder="新しいタスクを入力..." class="flex-grow border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto">
-                    <select id="todo-assignee" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="モリヤ">モリヤ</option>
-                        <option value="モリナガ">モリナガ</option>
-                        <option value="シミズ">シミズ</option>
-                        <option value="スギタニ">スギタニ</option>
-                        <option value="ウエダ">ウエダ</option>
-                    </select>
-                    <input type="date" id="todo-due-date" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    <button id="add-todo-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform duration-150 active:scale-95">追加</button>
-                </div>
-                <!-- Filter -->
-                <div class="flex justify-end mb-4">
-                    <label for="todo-filter" class="mr-2 text-sm font-medium text-gray-700 self-center">表示する担当者:</label>
-                    <select id="todo-filter" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                        <option value="全員">全員</option>
-                        <option value="モリヤ">モリヤ</option>
-                        <option value="モリナガ">モリナガ</option>
-                        <option value="シミズ">シミズ</option>
-                        <option value="スギタニ">スギタニ</option>
-                        <option value="ウエダ">ウエダ</option>
-                    </select>
-                </div>
-                <!-- ToDo List Container -->
-                <ul id="todo-list-container" class="space-y-3">
-                    <!-- ToDo items will be generated here by JS -->
-                </ul>
             </div>
         </section>
 
@@ -263,176 +210,9 @@
         </section>
 
     </main>
-<script type="module">
-    // --- Firebase SDKのインポート ---
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // --- Firebaseの初期化 ---
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO", authDomain: "DEMO", projectId: "DEMO" };
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    // --- ToDoリスト機能 ---
-    const todoInput = document.getElementById('todo-input');
-    const todoAssignee = document.getElementById('todo-assignee');
-    const todoDueDate = document.getElementById('todo-due-date');
-    const addTodoBtn = document.getElementById('add-todo-btn');
-    const todoListContainer = document.getElementById('todo-list-container');
-    const todoFilter = document.getElementById('todo-filter');
-    
-    const assigneeColors = {
-        'モリヤ': 'bg-red-500',
-        'モリナガ': 'bg-blue-500',
-        'シミズ': 'bg-green-500',
-        'スギタニ': 'bg-yellow-500',
-        'ウエダ': 'bg-purple-500'
-    };
-
-    let todosCollection;
-
-    // --- 認証とデータ取得の開始 ---
-    async function initializeAppWithAuth() {
-        try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-            console.log("Authenticated successfully.");
-            
-            // 認証後にコレクション参照を設定
-            todosCollection = collection(db, `/artifacts/${appId}/public/data/todos`);
-            
-            // リアルタイムリスナーを設定
-            onSnapshot(todosCollection, (snapshot) => {
-                const todos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderTodos(todos);
-            });
-
-        } catch (error) {
-            console.error("Authentication or data fetching failed:", error);
-            todoListContainer.innerHTML = `<p class="text-red-500">データの読み込みに失敗しました。</p>`;
-        }
-    }
-
-    const renderTodos = (todos) => {
-        const filterValue = todoFilter.value;
-        let filteredTodos = [...todos];
-
-        if (filterValue !== '全員') {
-            filteredTodos = filteredTodos.filter(todo => todo.assignee === filterValue);
-        }
-
-        filteredTodos.sort((a, b) => {
-            if (a.completed !== b.completed) return a.completed ? 1 : -1;
-            const dateA = a.dueDate ? new Date(a.dueDate + 'T00:00:00') : null;
-            const dateB = b.dueDate ? new Date(b.dueDate + 'T00:00:00') : null;
-            if (dateA && dateB) return dateA - dateB;
-            if (dateA) return -1;
-            if (dateB) return 1;
-            // createdAt フィールドが存在すればそれに基づきソート、なければIDでソート
-            const timeA = a.createdAt?.seconds || parseInt(a.id.substring(0, 8), 16);
-            const timeB = b.createdAt?.seconds || parseInt(b.id.substring(0, 8), 16);
-            return timeB - timeA;
-        });
-        
-        todoListContainer.innerHTML = '';
-        if (filteredTodos.length === 0) {
-            todoListContainer.innerHTML = `<p class="text-gray-500">タスクはありません。</p>`;
-            return;
-        }
-
-        filteredTodos.forEach(todo => {
-            const li = document.createElement('li');
-            li.className = `todo-item flex items-center justify-between p-3 rounded-md border ${todo.completed ? 'completed bg-gray-50' : 'bg-white'}`;
-            li.dataset.id = todo.id;
-
-            const color = assigneeColors[todo.assignee] || 'bg-gray-500';
-            
-            let dueDateHtml = '';
-            if (todo.dueDate) {
-                const dueDate = new Date(todo.dueDate + 'T00:00:00');
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                let dateColor = 'text-gray-500';
-                if (!todo.completed && dueDate < today) {
-                    dateColor = 'text-red-500 font-semibold';
-                }
-                
-                const formattedDate = dueDate.toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' });
-                dueDateHtml = `<span class="due-date-badge text-xs mr-3 ${dateColor}">期日: ${formattedDate}</span>`;
-            }
-
-            li.innerHTML = `
-                <div class="flex items-center flex-grow">
-                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 flex-shrink-0" ${todo.completed ? 'checked' : ''}>
-                    <span class="todo-text ml-4 text-gray-800">${todo.text}</span>
-                </div>
-                <div class="flex items-center flex-shrink-0">
-                    ${dueDateHtml}
-                    <span class="assignee-badge ${color}">${todo.assignee}</span>
-                    <button class="delete-todo-btn ml-4 text-gray-400 hover:text-red-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                    </button>
-                </div>
-            `;
-            todoListContainer.appendChild(li);
-        });
-    };
-
-    addTodoBtn.addEventListener('click', async () => {
-        const text = todoInput.value.trim();
-        if (text && todosCollection) {
-            await addDoc(todosCollection, {
-                text: text,
-                assignee: todoAssignee.value,
-                dueDate: todoDueDate.value,
-                completed: false,
-                createdAt: serverTimestamp()
-            });
-            todoInput.value = '';
-            todoDueDate.value = '';
-        }
-    });
-    
-    todoFilter.addEventListener('change', () => {
-        // Just trigger a re-render with the current local data, which is kept up-to-date by onSnapshot
-         onSnapshot(todosCollection, (snapshot) => {
-                const todos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderTodos(todos);
-         });
-    });
-
-    todoInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            addTodoBtn.click();
-        }
-    });
-
-    todoListContainer.addEventListener('click', async (e) => {
-        const target = e.target;
-        const parentLi = target.closest('.todo-item');
-        if (!parentLi || !todosCollection) return;
-        
-        const todoId = parentLi.dataset.id;
-        const todoRef = doc(todosCollection, todoId);
-
-        if (target.type === 'checkbox') {
-            await updateDoc(todoRef, {
-                completed: target.checked
-            });
-        } else if (target.closest('.delete-todo-btn')) {
-            await deleteDoc(todoRef);
-        }
-    });
-
-    // --- カレンダー機能（変更なし）---
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // --- カレンダー機能 ---
     const calendarContainer = document.getElementById('calendar-scroll-container');
     const prevButton = document.getElementById('prev-month');
     const nextButton = document.getElementById('next-month');
@@ -565,9 +345,7 @@
     const scrollMonth = () => calendarContainer.querySelector('.calendar-month').offsetWidth;
     nextButton.addEventListener('click', () => calendarContainer.scrollBy({ left: scrollMonth(), behavior: 'smooth' }));
     prevButton.addEventListener('click', () => calendarContainer.scrollBy({ left: -scrollMonth(), behavior: 'smooth' }));
-    
-    // --- 初期化処理の呼び出し ---
-    initializeAppWithAuth();
+});
 </script>
 </body>
 </html>
