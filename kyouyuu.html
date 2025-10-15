@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>情報共有ページ</title>
+    <title>情報共有特設サイト</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -37,6 +37,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             border: 1px solid transparent;
+            cursor: pointer;
         }
         /* 通常の予定 */
         .event-normal {
@@ -61,8 +62,14 @@
             background-color: #1f2937; /* gray-800 */
             color: #f9fafb; /* gray-50 */
         }
+        /* Webコンテストの予定（緑） */
+        .event-contest {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+            border-color: #bbf7d0; /* green-200 */
+        }
         /* 過去の日のイベント */
-        .past-day .event-normal, .past-day .event-saturday, .past-day .event-high-priority {
+        .past-day .event-normal, .past-day .event-saturday, .past-day .event-high-priority, .past-day .event-contest {
             background-color: #e5e7eb; /* gray-200 */
             color: #6b7280; /* gray-500 */
             border-color: #d1d5db; /* gray-300 */
@@ -70,6 +77,14 @@
          .past-day .event-important {
             background-color: #6b7280; /* gray-500 */
             color: #d1d5db; /* gray-300 */
+        }
+        /* Modal styles */
+        #event-modal, #event-modal-backdrop {
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+        }
+        #event-modal.hidden, #event-modal-backdrop.hidden {
+            opacity: 0;
+            visibility: hidden;
         }
     </style>
 </head>
@@ -153,7 +168,7 @@
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 md:col-span-2 lg:col-span-3">
                     <h3 class="text-xl font-semibold text-indigo-700 mb-3">僕らが作ってるHP</h3>
                     <ul class="space-y-2">
-                        <li><a href="file:///media/fuse/drivefs-ab8b5b3ed99213de07f5b56a773760e8/team_drives/%E4%B8%AD%E5%AD%A6%E6%8A%80%E8%A1%93%E7%A7%91%EF%BC%8BWeb%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/2025%E4%B8%AD2Web%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/25B07%E5%AE%88%E5%B1%8B%E5%B4%87%E7%A7%80/Actualperformance/top.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">トップページへ <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="file:///media/fuse/drivefs-ab8b5b3ed99213de0T5b56a773760e8/team_drives/%E4%B8%AD%E5%AD%A6%E6%8A%80%E8%A1%93%E7%A7%91%EF%BC%8BWeb%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/2025%E4%B8%AD2Web%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/25B07%E5%AE%88%E5%B1%8B%E5%B4%87%E7%A7%80/Actualperformance/top.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">トップページへ <span class="ml-1 text-xs">↗</span></a></li>
                     </ul>
                 </div>
                 <!-- ドキュメント -->
@@ -176,26 +191,30 @@
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                     <h3 class="text-xl font-semibold text-green-700 mb-3">スプレッドシート</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">プロジェクト進捗管理表 <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="https://docs.google.com/spreadsheets/d/1n4ZSHqn7fsye8tMvatf0orqJIvPSCgzB4tFCH4KZZLE/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">HPの改善点(回答)<span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="https://docs.google.com/spreadsheets/d/1L-cnJNl7g_j2r2yUi89ereJFS1VkGi0UHnSze8cYwcA/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">外国人に向けたアンケート(回答)<span class="ml-1 text-xs">↗</span></a></li>
                     </ul>
                 </div>
                 <!-- フォーム -->
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                     <h3 class="text-xl font-semibold text-purple-700 mb-3">フォーム</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">経費精算申請 <span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">休暇申請フォーム <span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">アンケートフォーム <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe4KbW5mQQ-IkXeLNCWCMlkHDpdLkCkay08A6X1EvFbjNoEYg/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">HPの改善点<span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSedhvF_EvlkiKNTw5-Rfg9Jsf5b7KGas9hEtRhIVZygbkS40A/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">外国人に向けたアンケート<span class="ml-1 text-xs">↗</span></a></li>
+                    </ul>
+                </div>
+                <!-- ドライブ -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-xl font-semibold text-red-700 mb-3">ドライブ</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://drive.google.com/drive/folders/1V6d5EiszW-dLcywv0UvRTMjVaCGfoFqo" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">共有ドライブ(B07) <span class="ml-1 text-xs">↗</span></a></li>
                     </ul>
                 </div>
                 <!-- よく使いそうなサイト -->
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                     <h3 class="text-xl font-semibold text-teal-700 mb-3">よく使いそうなサイト</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">社内ポータル <span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">勤怠管理システム <span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">Webメール <span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="#" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">チャットツール <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="https://mail.google.com/chat/u/0/#chat/space/AAQAquQBKsk" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">チャットツール <span class="ml-1 text-xs">↗</span></a></li>
                     </ul>
                 </div>
                 <!-- その他 -->
@@ -203,13 +222,30 @@
                     <h3 class="text-xl font-semibold text-gray-600 mb-3">その他</h3>
                     <ul class="space-y-2">
                          <li><a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">今年度のスケジュール<span class="ml-1 text-xs">↗</span></a></li>
-                         <li><a href="https://webcon.japias.jp/rule.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">webコンルール<span class="ml-1 text-xs">↗</span></a></li>
+                         <li><a href="https://webcon.japias.jp/rule.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">webコンのルール<span class="ml-1 text-xs">↗</span></a></li>
                     </ul>
                 </div>
             </div>
         </section>
 
     </main>
+    
+    <!-- Modal Backdrop -->
+    <div id="event-modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40"></div>
+
+    <!-- Event Modal -->
+    <div id="event-modal" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl w-11/12 max-w-md p-6 z-50">
+        <h3 id="modal-title" class="text-2xl font-bold text-gray-900 mb-2">Event Title</h3>
+        <p id="modal-date" class="text-sm text-gray-500 mb-4">Event Date</p>
+        <div class="mb-4">
+            <h4 class="font-semibold text-gray-700 mb-2">備考欄</h4>
+            <p id="modal-remarks" class="text-gray-600 bg-gray-100 p-3 rounded-md min-h-[80px]">ここに備考が表示されます。</p>
+        </div>
+        <button id="modal-close-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+    </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // --- カレンダー機能 ---
@@ -226,15 +262,34 @@ document.addEventListener('DOMContentLoaded', function () {
         { year: 2026, month: 2, day: 20, name: '春分の日' },
     ];
     const events = [
-        { year: 2025, month: 9, day: 13, title: 'Web会議(4時頃〜)', type: 'high-priority' },
-        { year: 2025, month: 9, day: 25, title: '運動会', type: 'high-priority' },
-        { year: 2025, month: 10, day: 2, title: 'エコチル調査発表', type: 'important' },
-        { year: 2025, month: 10, day: 6, title: '芸術鑑賞会', type: 'high-priority' },
-        { year: 2025, month: 10, day: 8, title: '探求Day(モリヤ無し)', type: 'important' },
-        { year: 2025, month: 11, day: 2, title: '後期中間考査', type: 'high-priority' },
-        { year: 2025, month: 11, day: 3, title: '後期中間考査', type: 'high-priority' },
-        { year: 2025, month: 11, day: 4, title: '後期中間考査', type: 'high-priority' },
-        { year: 2025, month: 11, day: 12, title: '合唱祭', type: 'high-priority' }
+        { year: 2025, month: 9, day: 13, title: 'Web会議(4時頃〜)', type: 'high-priority', remarks: '参加必須です。会議用のリンクは直前に共有します。' },
+        { year: 2025, month: 9, day: 25, title: '運動会', type: 'high-priority', remarks: '運動会' },
+        { year: 2025, month: 10, day: 2, title: 'エコチル調査発表', type: 'important', remarks: '頑張りましょう。時間などは後日共有します' },
+        { year: 2025, month: 10, day: 6, title: '芸術鑑賞会', type: 'high-priority', remarks: '場所：有明四季劇場　現地集合・解散。' },
+        { year: 2025, month: 10, day: 8, title: '探求Day', type: 'important', remarks: 'モリヤは公欠' },
+        { year: 2025, month: 11, day: 2, title: '後期中間考査', type: 'high-priority', remarks: '試験頑張ってね。' },
+        { year: 2025, month: 11, day: 3, title: '後期中間考査', type: 'high-priority', remarks: '試験頑張ってね。' },
+        { year: 2025, month: 11, day: 4, title: '後期中間考査', type: 'high-priority', remarks: '試験頑張ってね。' },
+        { year: 2025, month: 11, day: 12, title: '合唱祭', type: 'high-priority', remarks: '合唱祭頑張ってね' },
+        
+        // Webコンテストのスケジュール
+        { year: 2025, month: 9, day: 22, title: '提出申請の受付締切', type: 'contest', remarks: '厳守' },
+        { year: 2025, month: 9, day: 30, title: 'ストリーミングサーバーオープン', type: 'contest', remarks: '11月20日まで' },
+        { year: 2025, month: 9, day: 30, title: '作品・サイトプロフィール提出オープン', type: 'contest', remarks: '11月20日まで' },
+        { year: 2025, month: 9, day: 31, title: '希望ドメイン名の登録オープン', type: 'contest', remarks: '11月13日まで' },
+        { year: 2025, month: 10, day: 13, title: 'ドメイン名の登録締切', type: 'contest', remarks: '厳守' },
+        { year: 2025, month: 10, day: 20, title: 'ストリーミングサーバーの利用クローズ', type: 'contest', remarks: '' },
+        { year: 2025, month: 10, day: 20, title: '作品の提出締切', type: 'contest', remarks: '厳守' },
+        { year: 2025, month: 11, day: 10, title: 'トップ50およびセミファイナリスト発表', type: 'contest', remarks: '予定' },
+        { year: 2025, month: 11, day: 27, title: '改良した作品・サイトプロフィール再提出の締切', type: 'contest', remarks: '厳守' },
+        { year: 2025, month: 11, day: 27, title: 'ベストドメインネーミング賞応募締切', type: 'contest', remarks: 'レポート提出' },
+        { year: 2026, month: 0, day: 24, title: 'ベストクリエイティブ賞 作品提出締切', type: 'contest', remarks: 'CM動画部門' },
+        { year: 2026, month: 0, day: 30, title: 'ベストクリエイティブ賞 の改良受付', type: 'contest', remarks: 'CM動画部門(未定)' },
+        { year: 2026, month: 1, day: 5, title: 'ベストクリエイティブ賞 の作品提出締切(改良版)', type: 'contest', remarks: 'CM動画部門(未定)' },
+        { year: 2026, month: 0, day: 13, title: 'ファイナリスト発表', type: 'contest', remarks: '' },
+        { year: 2026, month: 1, day: 18, title: 'プレゼン資料提出締切', type: 'contest', remarks: '厳守' },
+        { year: 2026, month: 1, day: 21, title: 'ファイナリストプレゼンテーション', type: 'contest', remarks: 'プレゼン審査および授賞式' },
+        { year: 2026, month: 1, day: 21, title: '最終結果発表', type: 'contest', remarks: '授賞式' },
     ];
     const startDate = new Date(2025, 9, 1);
     const endDate = new Date(2026, 2, 1);
@@ -306,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const isNotNov8th = !(year === 2025 && month === 10 && date === 8);
                     const isNotOct25th = !(year === 2025 && month === 9 && date === 25);
                     if (dayOfWeek === 6 && isNotNov8th && isNotOct25th) {
-                        dayEvents.push({ title: 'Worldday', type: 'saturday' });
+                        dayEvents.push({ title: 'Worldday', type: 'saturday', remarks: '定例のWorlddayです。' });
                     }
                     let eventHtml = dayEvents.map(e => {
                         let eventClass = '';
@@ -314,9 +369,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             case 'important': eventClass = 'event-important'; break;
                             case 'high-priority': eventClass = 'event-high-priority'; break;
                             case 'saturday': eventClass = 'event-saturday'; break;
+                            case 'contest': eventClass = 'event-contest'; break;
                             default: eventClass = 'event-normal';
                         }
-                        return `<div class="event ${eventClass}" title="${e.title}">${e.title}</div>`;
+                        const remarks = e.remarks || '';
+                        return `<div class="event ${eventClass}" 
+                                     title="${e.title}" 
+                                     data-title="${e.title}"
+                                     data-year="${year}"
+                                     data-month="${month}"
+                                     data-date="${date}"
+                                     data-remarks="${remarks}"
+                                     >${e.title}</div>`;
                     }).join('');
                     html += `<td class="border p-1 h-24 align-top ${tdClass.trim()}">
                                 <div class="w-7 h-7 mx-auto flex items-center justify-center ${dateDivClass}">
@@ -345,8 +409,41 @@ document.addEventListener('DOMContentLoaded', function () {
     const scrollMonth = () => calendarContainer.querySelector('.calendar-month').offsetWidth;
     nextButton.addEventListener('click', () => calendarContainer.scrollBy({ left: scrollMonth(), behavior: 'smooth' }));
     prevButton.addEventListener('click', () => calendarContainer.scrollBy({ left: -scrollMonth(), behavior: 'smooth' }));
+
+    // --- Modal Logic ---
+    const modal = document.getElementById('event-modal');
+    const backdrop = document.getElementById('event-modal-backdrop');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDate = document.getElementById('modal-date');
+    const modalRemarks = document.getElementById('modal-remarks');
+    const closeModalBtn = document.getElementById('modal-close-btn');
+
+    calendarContainer.addEventListener('click', function(e) {
+        const eventEl = e.target.closest('.event');
+        if (eventEl) {
+            const title = eventEl.dataset.title;
+            const year = parseInt(eventEl.dataset.year);
+            const month = parseInt(eventEl.dataset.month);
+            const day = parseInt(eventEl.dataset.date);
+            const remarks = eventEl.dataset.remarks;
+
+            modalTitle.textContent = title;
+            modalDate.textContent = `${year}年${month + 1}月${day}日`;
+            modalRemarks.textContent = remarks || '特にありません。';
+
+            modal.classList.remove('hidden');
+            backdrop.classList.remove('hidden');
+        }
+    });
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        backdrop.classList.add('hidden');
+    }
+
+    closeModalBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
 });
 </script>
 </body>
 </html>
-
