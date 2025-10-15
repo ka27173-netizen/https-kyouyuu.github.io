@@ -155,7 +155,7 @@
                         <div id="todo-assignee-group" class="border border-gray-300 rounded-md p-3 bg-white">
                             <label class="block text-sm font-medium text-gray-700 mb-2">担当者 (複数選択可)</label>
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                <div><label class="flex items-center text-sm font-semibold"><input type="checkbox" name="assignee" value="全員" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2">全員</label></div>
+                                <div><label class="flex items-center text-sm font-semibold"><input type="checkbox" id="all-assignees-checkbox" name="assignee" value="全員" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2">全員</label></div>
                                 <div><label class="flex items-center text-sm"><input type="checkbox" name="assignee" value="モリヤ" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2 assignee-member">モリヤ</label></div>
                                 <div><label class="flex items-center text-sm"><input type="checkbox" name="assignee" value="モリナガ" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2 assignee-member">モリナガ</label></div>
                                 <div><label class="flex items-center text-sm"><input type="checkbox" name="assignee" value="シミズ" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2 assignee-member">シミズ</label></div>
@@ -170,7 +170,7 @@
                     </div>
                 </div>
                 <div class="flex justify-end mt-4 mb-6">
-                    <button id="add-todo-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-indigo-700 transition-colors">追加</button>
+                    <button id="add-todo-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-indigo-700 transition-colors disabled:bg-indigo-400">追加</button>
                 </div>
                 
                 <!-- Filter and Sort Controls -->
@@ -343,7 +343,7 @@
     const todoDueDate = document.getElementById('todo-duedate');
     const filterAssigneeSelect = document.getElementById('filter-assignee');
     const sortOrderSelect = document.getElementById('sort-order');
-    const allAssigneeCheckbox = document.querySelector('#todo-assignee-group input[value="全員"]');
+    const allAssigneeCheckbox = document.getElementById('all-assignees-checkbox');
     const memberCheckboxes = document.querySelectorAll('.assignee-member');
     
     const todoCollectionPath = `/artifacts/${appId}/public/data/todos`;
@@ -366,6 +366,7 @@
 
     // Add task function
     const addTodo = async () => {
+        addTodoBtn.disabled = true;
         const taskText = todoInput.value.trim();
         const dueDate = todoDueDate.value;
         const selectedAssignees = [...memberCheckboxes]
@@ -388,7 +389,11 @@
                 memberCheckboxes.forEach(cb => cb.checked = false);
             } catch (e) {
                 console.error("Error adding document: ", e);
+            } finally {
+                addTodoBtn.disabled = false;
             }
+        } else {
+             addTodoBtn.disabled = false;
         }
     };
     
@@ -497,7 +502,15 @@
             default:
                 sortField = 'createdAt'; sortDirection = 'desc'; break;
         }
-        constraints.push(orderBy(sortField, sortDirection));
+        // Firestore requires that the first orderBy field matches the field in the inequality filter if one exists.
+        // However, we can have multiple orderBy clauses. Here, we prioritize the user's sort choice.
+        // For due date sorting, we also add a secondary sort by createdAt to have a consistent order for items with the same due date.
+        if (sortField === 'dueDate') {
+            constraints.push(orderBy(sortField, sortDirection));
+            constraints.push(orderBy('createdAt', 'desc'));
+        } else {
+             constraints.push(orderBy(sortField, sortDirection));
+        }
 
         const q = query(todoCollection, ...constraints);
         unsubscribe = onSnapshot(q, (snapshot) => {
