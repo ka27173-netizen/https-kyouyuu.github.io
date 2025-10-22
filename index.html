@@ -86,6 +86,24 @@
             opacity: 0;
             visibility: hidden;
         }
+        /* カウントダウンタイマーのスタイル（シンプル版） */
+        .flip-card {
+            /* background-color と color を削除し、JSで動的に制御 */
+            padding: 0.75rem 1rem;
+            font-size: 2.5rem; /* 40px */
+            line-height: 1;
+            font-weight: bold;
+            border-radius: 0.5rem; /* 8px */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* アニメーション */
+            border: 1px solid transparent; /* 枠線用のスペース確保 */
+        }
+        @media (min-width: 640px) {
+            .flip-card {
+                padding: 1rem 1.5rem;
+                font-size: 3.75rem; /* 60px */
+            }
+        }
     </style>
 </head>
 <body class="text-gray-800 pt-16">
@@ -106,11 +124,39 @@
     </header>
 
     <main class="container mx-auto p-4 md:p-8 max-w-7xl">
+    
+        <!-- 0. カウントダウンタイマー (メイン：黒・緑) -->
+        <section id="countdown-main" class="mb-8 md:mb-12 pt-4">
+            <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center">
+                <h3 id="countdown-title-main" class="text-xl font-semibold text-gray-700 mb-4">次の締切・重要予定</h3>
+                <div class="flex justify-center items-baseline space-x-2" id="countdown-timer-container-main">
+                    <div id="countdown-timer-main" class="flex justify-center items-center space-x-1 sm:space-x-2">
+                        <!-- JavaScriptによって数字がここに挿入されます -->
+                    </div>
+                    <span class="text-3xl sm:text-4xl font-bold text-gray-800">日</span>
+                </div>
+                <p id="countdown-event-name-main" class="mt-3 text-lg sm:text-xl text-indigo-600 font-bold"></p>
+            </div>
+        </section>
+
+        <!-- 0.5. カウントダウンタイマー (優先：黄) -->
+        <section id="countdown-priority" class="mb-8 md:mb-12 pt-4">
+            <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center">
+                <h3 id="countdown-title-priority" class="text-xl font-semibold text-gray-700 mb-4">次の優先予定</h3>
+                <div class="flex justify-center items-baseline space-x-2" id="countdown-timer-container-priority">
+                    <div id="countdown-timer-priority" class="flex justify-center items-center space-x-1 sm:space-x-2">
+                        <!-- JavaScriptによって数字がここに挿入されます -->
+                    </div>
+                    <span class="text-3xl sm:text-4xl font-bold text-gray-800">日</span>
+                </div>
+                <p id="countdown-event-name-priority" class="mt-3 text-lg sm:text-xl text-indigo-600 font-bold"></p>
+            </div>
+        </section>
 
         <!-- 1. 連絡したいこと -->
         <section id="notifications" class="mb-8 md:mb-12 pt-4">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
                 連絡事項
             </h2>
             <div class="space-y-4">
@@ -123,7 +169,7 @@
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                     <p class="font-semibold text-gray-800">【重要】HTML・CSSのコードのスペースは基本半角にしてください</p>
                     <p class="text-sm text-gray-600 mt-1">半角にしなかった場合エラーが起きる可能性があります(こういう文章の中に全角スペースはいいですよ)</p>
-                    <p class="text-sm text-gray-600 mt-1">VSコードにこれを入れると便利ですよ <a href="https://qiita.com/Junpei_Takagi/items/3983cc735e71ea3917fd">https://qiita.com/Junpei_Takagi/items/3983cc735e71ea3917fd</a></p>
+                    <p class="text-sm text-gray-600 mt-1">VSコードにこれを入れると便利ですよ <a href="https://qiita.com/Junpei_Takagi/items/3983cc735e71ea3917fd" class="text-indigo-600 hover:underline">https://qiita.com/Junpei_Takagi/items/3983cc735e71ea3917fd</a></p>
                     <p class="text-sm text-gray-600 mt-1">これを入れるとエラーが起きそうな全角スペースの場所を赤色にしてくれます(さっきもいったけど文章の中の全角スペースはいいよ)</p>
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
@@ -145,15 +191,15 @@
         <section id="calendar" class="mb-8 md:mb-12 pt-4">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect><line x1="16" x2="16" y1="2" y2="6"></line><line x1="8" x2="8" y1="2" y2="6"></line><line x1="3" x2="21" y1="10" y2="10"></line></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect><line x1="16" x2="16" y1="2" y2="6"></line><line x1="8" x2="8" y1="2" y2="6"></line><line x1="3" x2="21" y1="10" y2="10"></line></svg>
                     カレンダー
                 </h2>
                 <div class="flex space-x-2">
                     <button id="prev-month" class="bg-indigo-600 text-white p-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform duration-150 active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
                     </button>
                     <button id="next-month" class="bg-indigo-600 text-white p-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform duration-150 active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
                     </button>
                 </div>
             </div>
@@ -166,7 +212,7 @@
         <!-- 3. リンク一覧 -->
         <section id="links" class="pt-4">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
                 リンク一覧
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -253,18 +299,13 @@
             <p id="modal-remarks" class="text-gray-600 bg-gray-100 p-3 rounded-md min-h-[80px]">ここに備考が表示されます。</p>
         </div>
         <button id="modal-close-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
     </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // --- カレンダー機能 ---
-    const calendarContainer = document.getElementById('calendar-scroll-container');
-    const prevButton = document.getElementById('prev-month');
-    const nextButton = document.getElementById('next-month');
-    
-    // 祝日データ (2025年10月以降)
+    // --- イベントと祝日のデータ ---
     const holidays = [
         { year: 2025, month: 10, day: 3, name: '文化の日' },
         { year: 2025, month: 10, day: 24, name: '振替休日' },
@@ -274,8 +315,6 @@ document.addEventListener('DOMContentLoaded', function () {
         { year: 2026, month: 1, day: 23, name: '天皇誕生日' },
         { year: 2026, month: 2, day: 20, name: '春分の日' },
     ];
-    
-    // イベントデータ (月は0から始まる: 0=1月, 9=10月, 11=12月)
     const events = [
         { year: 2025, month: 9, day: 13, title: 'Web会議(4時頃〜)', type: 'high-priority', remarks: '参加必須です。会議用のリンクは直前に共有します。' },
         { year: 2025, month: 9, day: 25, title: '運動会', type: 'high-priority', remarks: '運動会' },
@@ -286,8 +325,6 @@ document.addEventListener('DOMContentLoaded', function () {
         { year: 2025, month: 11, day: 3, title: '後期中間考査', type: 'high-priority', remarks: '試験頑張ってね。' },
         { year: 2025, month: 11, day: 4, title: '後期中間考査', type: 'high-priority', remarks: '試験頑張ってね。' },
         { year: 2025, month: 11, day: 12, title: '合唱祭', type: 'high-priority', remarks: '合唱祭頑張ってね' },
-        
-        // Webコンテストのスケジュール
         { year: 2025, month: 9, day: 22, title: '提出申請の受付締切', type: 'contest', remarks: '厳守' },
         { year: 2025, month: 9, day: 30, title: 'ストリーミングサーバーオープン', type: 'contest', remarks: '11月20日まで' },
         { year: 2025, month: 9, day: 30, title: '作品・サイトプロフィール提出オープン', type: 'contest', remarks: '11月20日まで' },
@@ -307,25 +344,150 @@ document.addEventListener('DOMContentLoaded', function () {
         { year: 2026, month: 1, day: 21, title: '最終結果発表', type: 'contest', remarks: '授賞式' },
     ];
     
-    // カレンダーの表示期間
-    const startDate = new Date(2025, 9, 1); // 2025年10月1日
-    const endDate = new Date(2026, 2, 1);   // 2026年3月1日（表示期間に含む）
+    // --- モーダル機能 ---
+    const modal = document.getElementById('event-modal');
+    const backdrop = document.getElementById('event-modal-backdrop');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDate = document.getElementById('modal-date');
+    const modalRemarks = document.getElementById('modal-remarks');
+    const closeModalBtn = document.getElementById('modal-close-btn');
 
-    /**
-     * 指定された年月のカレンダーHTML要素を生成する
-     * @param {number} year - 年
-     * @param {number} month - 月 (0-11)
-     * @returns {HTMLElement} 月カレンダーのDiv要素
-     */
+    function openEventModal(eventData) {
+        modalTitle.textContent = eventData.title;
+        modalDate.textContent = `${eventData.year}年${eventData.month + 1}月${eventData.day}日`;
+        modalRemarks.textContent = eventData.remarks || '特にありません。';
+        modal.classList.remove('hidden');
+        backdrop.classList.remove('hidden');
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        backdrop.classList.add('hidden');
+    }
+
+    closeModalBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+
+    // --- カウントダウン機能 ---
+    function setupCountdowns() { // 関数名を複数形に変更
+        // --- メインタイマー（黒＋緑）の要素 ---
+        const countdownTimerMainEl = document.getElementById('countdown-timer-main');
+        const countdownEventNameMainEl = document.getElementById('countdown-event-name-main');
+        const countdownSectionMain = document.getElementById('countdown-main');
+
+        // --- 優先タイマー（黄）の要素 ---
+        const countdownTimerPriorityEl = document.getElementById('countdown-timer-priority');
+        const countdownEventNamePriorityEl = document.getElementById('countdown-event-name-priority');
+        const countdownSectionPriority = document.getElementById('countdown-priority');
+
+        const today = new Date(); // 常に実際の日付を取得
+        // 日付の時刻を0時0分0秒にリセット
+        today.setHours(0, 0, 0, 0);
+
+        // --- 1. メインタイマー（黒＋緑）のロジック ---
+        const mainEvents = events.filter(e => 
+            e.type === 'important' || 
+            e.type === 'contest'
+        );
+        const upcomingMainEvents = mainEvents
+            .map(e => ({ ...e, date: new Date(e.year, e.month, e.day) }))
+            .filter(e => e.date >= today)
+            .sort((a, b) => a.date - b.date);
+
+        if (upcomingMainEvents.length > 0) {
+            const nextEvent = upcomingMainEvents[0];
+            const targetDate = nextEvent.date;
+            const diffTime = targetDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let dayColorClass = 'bg-gray-800 text-gray-50'; // デフォルト (6日以上前)
+            if (diffDays <= 5 && diffDays > 0) {
+                dayColorClass = 'bg-red-100 text-red-700 border-red-300';
+            } else if (diffDays === 0) {
+                dayColorClass = 'bg-red-600 text-white border-red-700';
+            }
+
+            countdownEventNameMainEl.textContent = `「${nextEvent.title}」まで`;
+            countdownEventNameMainEl.style.cursor = 'pointer';
+            countdownEventNameMainEl.classList.add('hover:underline');
+            
+            countdownEventNameMainEl.addEventListener('click', () => {
+                openEventModal({
+                    title: nextEvent.title,
+                    year: nextEvent.date.getFullYear(),
+                    month: nextEvent.date.getMonth(),
+                    day: nextEvent.date.getDate(),
+                    remarks: nextEvent.remarks
+                });
+            });
+
+            const daysString = diffDays.toString().padStart(2, '0');
+            countdownTimerMainEl.innerHTML = `
+                <span class="flip-card ${dayColorClass}">${daysString[0]}</span>
+                <span class="flip-card ${dayColorClass}">${daysString[1]}</span>
+            `;
+        } else {
+            countdownSectionMain.innerHTML = '<p class="text-lg text-gray-600 text-center">現在、直近の締切・重要予定はありません。</p>';
+        }
+
+        // --- 2. 優先タイマー（黄）のロジック ---
+        const priorityEvents = events.filter(e => e.type === 'high-priority');
+        const upcomingPriorityEvents = priorityEvents
+            .map(e => ({ ...e, date: new Date(e.year, e.month, e.day) }))
+            .filter(e => e.date >= today)
+            .sort((a, b) => a.date - b.date);
+        
+        if (upcomingPriorityEvents.length > 0) {
+            const nextEvent = upcomingPriorityEvents[0];
+            const targetDate = nextEvent.date;
+            const diffTime = targetDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let dayColorClass = 'bg-gray-800 text-gray-50'; // デフォルト (6日以上前)
+            if (diffDays <= 5 && diffDays > 0) {
+                dayColorClass = 'bg-red-100 text-red-700 border-red-300';
+            } else if (diffDays === 0) {
+                dayColorClass = 'bg-red-600 text-white border-red-700';
+            }
+
+            countdownEventNamePriorityEl.textContent = `「${nextEvent.title}」まで`;
+            countdownEventNamePriorityEl.style.cursor = 'pointer';
+            countdownEventNamePriorityEl.classList.add('hover:underline');
+            
+            countdownEventNamePriorityEl.addEventListener('click', () => {
+                openEventModal({
+                    title: nextEvent.title,
+                    year: nextEvent.date.getFullYear(),
+                    month: nextEvent.date.getMonth(),
+                    day: nextEvent.date.getDate(),
+                    remarks: nextEvent.remarks
+                });
+            });
+
+            const daysString = diffDays.toString().padStart(2, '0');
+            countdownTimerPriorityEl.innerHTML = `
+                <span class="flip-card ${dayColorClass}">${daysString[0]}</span>
+                <span class="flip-card ${dayColorClass}">${daysString[1]}</span>
+            `;
+        } else {
+            countdownSectionPriority.innerHTML = '<p class="text-lg text-gray-600 text-center">現在、直近の優先予定はありません。</p>';
+        }
+    }
+
+    // --- カレンダー機能 ---
+    const calendarContainer = document.getElementById('calendar-scroll-container');
+    const prevButton = document.getElementById('prev-month');
+    const nextButton = document.getElementById('next-month');
+    const startDate = new Date(2025, 9, 1);
+    const endDate = new Date(2026, 2, 1);
+
     function createMonthCalendar(year, month) {
         const monthDiv = document.createElement('div');
         monthDiv.className = 'calendar-month flex-shrink-0 w-full p-2';
         const monthName = new Date(year, month).toLocaleString('ja-JP', { year: 'numeric', month: 'long' });
-        
         let html = `<div class="text-center mb-4"><h3 class="text-xl font-semibold">${monthName}</h3></div>`;
         html += '<table class="w-full text-sm text-center border-collapse table-fixed">';
         html += '<thead><tr class="text-gray-600">';
-        
         const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
         weekdays.forEach((day, i) => {
             let colorClass = '';
@@ -334,35 +496,28 @@ document.addEventListener('DOMContentLoaded', function () {
             html += `<th class="p-2 w-1/7 border-b ${colorClass}">${day}</th>`;
         });
         html += '</tr></thead><tbody>';
-        
-        const firstDay = new Date(year, month, 1).getDay(); // 1日の曜日 (0=日, 6=土)
-        const daysInMonth = new Date(year, month + 1, 0).getDate(); // その月の日数
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // 時刻をリセット
-        
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date(); // 常に実際の日付を取得
+        // 日付の時刻を0時0分0秒にリセット
+        today.setHours(0, 0, 0, 0);
         let date = 1;
-        
-        for (let i = 0; i < 6; i++) { // 最大6週
+        for (let i = 0; i < 6; i++) {
             html += '<tr>';
-            for (let j = 0; j < 7; j++) { // 7日間
+            for (let j = 0; j < 7; j++) {
                 if (i === 0 && j < firstDay || date > daysInMonth) {
-                    // 月の最初または最後で、日付がないセル
                     html += '<td class="border p-1"></td>';
                 } else {
                     const currentDate = new Date(year, month, date);
                     currentDate.setHours(0, 0, 0, 0);
-                    
                     let tdClass = '', dateDivClass = '', dateTextClass = '', holidayName = '';
                     const isPast = currentDate < today;
                     const isToday = currentDate.getTime() === today.getTime();
                     const dayOfWeek = currentDate.getDay();
-                    
-                    // 祝日チェック
                     const holiday = holidays.find(h => h.year === year && h.month === month && h.day === date);
-                    const isSportsDay = year === 2025 && month === 9 && date === 13; // 9月13日のスポーツの日イベントをここでチェック
+                    const isSportsDay = year === 2025 && month === 9 && date === 13;
                     const isHoliday = holiday || isSportsDay;
 
-                    // 祝日の名前表示
                     if (holiday) {
                         const holidayTextColor = isPast ? 'text-gray-400' : 'text-red-700';
                         holidayName = `<div class="text-xs ${holidayTextColor} truncate">${holiday.name}</div>`;
@@ -371,12 +526,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         holidayName = `<div class="text-xs ${holidayTextColor} truncate">スポーツの日</div>`;
                     }
                     
-                    // 背景色
                     if (isHoliday) tdClass = 'bg-red-100';
                     else if (dayOfWeek === 0) tdClass = 'bg-red-100';
                     else if (dayOfWeek === 6) tdClass = 'bg-blue-100';
 
-                    // 過去日/日付の色
                     if (isPast) {
                         tdClass += ' past-day';
                         dateTextClass = 'text-gray-400';
@@ -387,26 +540,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         else dateTextClass = 'text-gray-800';
                     }
 
-                    // 今日のハイライト
                     if (isToday) {
                         dateDivClass = 'bg-indigo-600 rounded-full';
                         dateTextClass = 'text-white font-bold';
                     }
                     
-                    // その日のイベントをフィルタリング
                     const dayEvents = events.filter(e => e.year === year && e.month === month && e.day === date);
-                    
-                    // 土曜日の定例Worlddayを追加（特定のイベントがある日を除く）
                     const isNotNov8th = !(year === 2025 && month === 10 && date === 8);
                     const isNotOct25th = !(year === 2025 && month === 9 && date === 25);
                     if (dayOfWeek === 6 && isNotNov8th && isNotOct25th) {
-                        // Worlddayはmonthが10(11月)の日付8、9月25日（運動会）と被らないように調整
-                        if (!dayEvents.some(e => e.title.includes('Worldday'))) {
-                             dayEvents.push({ title: 'Worldday', type: 'saturday', remarks: '定例のWorlddayです。' });
-                        }
+                        dayEvents.push({ title: 'Worldday', type: 'saturday', remarks: '定例のWorlddayです。' });
                     }
-
-                    // イベントHTMLを生成
                     let eventHtml = dayEvents.map(e => {
                         let eventClass = '';
                         switch(e.type) {
@@ -422,12 +566,10 @@ document.addEventListener('DOMContentLoaded', function () {
                                      data-title="${e.title}"
                                      data-year="${year}"
                                      data-month="${month}"
-                                     data-date="${date}"
+                                     data-day="${date}"
                                      data-remarks="${remarks}"
                                      >${e.title}</div>`;
                     }).join('');
-                    
-                    // セルに追加
                     html += `<td class="border p-1 h-24 align-top ${tdClass.trim()}">
                                 <div class="w-7 h-7 mx-auto flex items-center justify-center ${dateDivClass}">
                                     <span class="font-medium ${dateTextClass}">${date}</span>
@@ -446,58 +588,33 @@ document.addEventListener('DOMContentLoaded', function () {
         return monthDiv;
     }
 
-    // カレンダーを初期描画
     let calDate = new Date(startDate);
     while (calDate <= endDate) {
         const monthCalendar = createMonthCalendar(calDate.getFullYear(), calDate.getMonth());
         calendarContainer.appendChild(monthCalendar);
         calDate.setMonth(calDate.getMonth() + 1);
     }
-    
-    // スクロールボタンのロジック
     const scrollMonth = () => calendarContainer.querySelector('.calendar-month').offsetWidth;
     nextButton.addEventListener('click', () => calendarContainer.scrollBy({ left: scrollMonth(), behavior: 'smooth' }));
     prevButton.addEventListener('click', () => calendarContainer.scrollBy({ left: -scrollMonth(), behavior: 'smooth' }));
 
-    // --- Modal Logic ---
-    const modal = document.getElementById('event-modal');
-    const backdrop = document.getElementById('event-modal-backdrop');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDate = document.getElementById('modal-date');
-    const modalRemarks = document.getElementById('modal-remarks');
-    const closeModalBtn = document.getElementById('modal-close-btn');
-
-    // イベントクリックでモーダルを表示
     calendarContainer.addEventListener('click', function(e) {
         const eventEl = e.target.closest('.event');
         if (eventEl) {
-            const title = eventEl.dataset.title;
-            // datasetのmonthは文字列なので数値に戻す
-            const year = parseInt(eventEl.dataset.year);
-            const month = parseInt(eventEl.dataset.month); 
-            const day = parseInt(eventEl.dataset.date);
-            const remarks = eventEl.dataset.remarks;
-
-            modalTitle.textContent = title;
-            // 月を+1して表示
-            modalDate.textContent = `${year}年${month + 1}月${day}日`;
-            modalRemarks.textContent = remarks || '特にありません。';
-
-            modal.classList.remove('hidden');
-            backdrop.classList.remove('hidden');
+            openEventModal({
+                title: eventEl.dataset.title,
+                year: parseInt(eventEl.dataset.year),
+                month: parseInt(eventEl.dataset.month),
+                day: parseInt(eventEl.dataset.day),
+                remarks: eventEl.dataset.remarks
+            });
         }
     });
 
-    // モーダルを閉じる関数
-    function closeModal() {
-        modal.classList.add('hidden');
-        backdrop.classList.add('hidden');
-    }
-
-    // 閉じるボタンと背景クリックでモーダルを閉じる
-    closeModalBtn.addEventListener('click', closeModal);
-    backdrop.addEventListener('click', closeModal);
+    // --- ページの初期化処理 ---
+    setupCountdowns(); // 呼び出しを複数形に変更
 });
 </script>
 </body>
 </html>
+
