@@ -119,16 +119,16 @@
                 font-size: 3.75rem; /* 60px */
             }
         }
-        
+
         /* カウントダウン数字のアニメーション (反転フラップ式) */
         @keyframes flipIn {
-            from {
-                opacity: 0;
+            0% {
                 transform: perspective(400px) rotateX(90deg);
+                opacity: 0;
             }
-            to {
-                opacity: 1;
+            100% {
                 transform: perspective(400px) rotateX(0deg);
+                opacity: 1;
             }
         }
         .animate-flip-in {
@@ -138,10 +138,21 @@
         }
         
         /* 締切間近のスタイル */
-        .countdown-near {
+        /* 5日前から */
+        .countdown-timer-container-main.near .flipper-static {
+            background-color: #fef2f2; /* red-50 */
             color: #dc2626; /* red-600 */
         }
-        .countdown-today {
+        .countdown-timer-container-main.near #countdown-unit-main {
+            color: #dc2626; /* red-600 */
+        }
+
+        /* 当日 */
+        .countdown-timer-container-main.today .flipper-static {
+            background-color: #b91c1c; /* red-800 */
+            color: #fef2f2; /* red-50 */
+        }
+        .countdown-timer-container-main.today #countdown-unit-main {
             color: #b91c1c; /* red-800 */
             font-weight: 700;
         }
@@ -170,7 +181,7 @@
         <section id="countdown-main" class="mb-8 md:mb-12 pt-4">
             <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center">
                 <h3 id="countdown-title-main" class="text-xl font-semibold text-gray-700 mb-4">次の締切・重要予定</h3>
-                <div class="flex justify-center items-baseline space-x-2" id="countdown-timer-container-main">
+                <div class="flex justify-center items-baseline space-x-2 countdown-timer-container-main" id="countdown-timer-container-main">
                     <div id="countdown-timer-main" class="flex justify-center items-center space-x-1 sm:space-x-2">
                         <!-- JavaScriptによって数字がここに挿入されます -->
                     </div>
@@ -194,8 +205,18 @@
                     </p>
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <p class="font-semibold text-gray-800">【重要】HTML・CSSのコードのスペースは基本半角にしてください</p>
+                    <p class="text-sm text-gray-600 mt-1">半角にしなかった場合エラーが起きる可能性があります(こういう文章の中に全角スペースはいいですよ)</p>
+                    <p class="text-sm text-gray-600 mt-1">VSコードにこれを入れると便利ですよ <a href="https://qiita.com/Junpei_Takagi/items/3983cc735e71ea3917fd" class="text-indigo-600 hover:underline">https://qiita.com/Junpei_Takagi/items/3983cc735e71ea3917fd</a></p>
+                    <p class="text-sm text-gray-600 mt-1">これを入れるとエラーが起きそうな全角スペースの場所を赤色にしてくれます(さっきもいったけど文章の中の全角スペースはいいよ)</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                     <p class="font-semibold text-gray-800">出典用のページを作成しました</p>
                     <p class="text-sm text-gray-600 mt-1">syuten.htmlを出典用HPにします</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <p class="font-semibold text-gray-800">スライド・スライド原稿</p>
+                    <p class="text-sm text-gray-600 mt-1">ぱぱっとと終わらせてHP改善したいです</p>
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                     <p class="font-semibold text-gray-800">ファイル構成を変更します</p>
@@ -237,7 +258,7 @@
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 md:col-span-2 lg:col-span-3">
                     <h3 class="text-xl font-semibold text-indigo-700 mb-3">僕らが作ってるHP</h3>
                     <ul class="space-y-2">
-                        <li><a href="file:///media/fuse/drivefs-ab8b5b3ed99213de0T5b56a773760e8/team_drives/%E4%B8%AD%E5%AD%A6%E6%8A%80%E8%A1%93%E7%A7%91%EF%BC%8BWeb%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/2025%E4%B8%AD2Web%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/25B07%E5%AE%88%E5%B1%8B%E5%B4%87%E7%A7%80/Actualperformance/top.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">トップページへ <span class="ml-1 text-xs">↗</span></a></li>
+                        <li><a href="file:///media/fuse/drivefs-ab8b5b3ed99213de0T5b56a773760e8/team_drives/%E4%B8%AD%E5%AD%A6%E6%8A%80%E8%A1%93%E7%A7%91%EF%BC%8BWeb%E3.82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/2025%E4%B8%AD2Web%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/25B07%E5%AE%88%E5%B1%8B%E5%B4%87%E7%A7%80/Actualperformance/top.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">トップページへ <span class="ml-1 text-xs">↗</span></a></li>
                     </ul>
                 </div>
                 <!-- ドキュメント -->
@@ -392,15 +413,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const countdownEventNameMainEl = document.getElementById('countdown-event-name-main');
         const countdownSectionMain = document.getElementById('countdown-main');
         const countdownUnitMainEl = document.getElementById('countdown-unit-main');
+        const countdownTimerContainerMainEl = document.getElementById('countdown-timer-container-main');
 
         const today = new Date(); // 常に実際の日付を取得
-        // 日付の時刻を0時0分0秒にリセット
-        today.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0); // 時刻をリセットして日付のみで比較
 
-        // --- 1. メインタイマー（黒＋緑）のロジック ---
-        const mainEventTypes = ['important', 'contest'];
-        const upcomingMainEvents = events
-            .filter(e => mainEventTypes.includes(e.type))
+        // メインタイマー用のイベント（黒＋緑）
+        const importantMainEvents = events.filter(e => e.type === 'important' || e.type === 'contest');
+        
+        const upcomingMainEvents = importantMainEvents
             .map(e => ({ ...e, date: new Date(e.year, e.month, e.day) }))
             .filter(e => e.date >= today)
             .sort((a, b) => a.date - b.date);
@@ -411,6 +432,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const diffTime = targetDate - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+            // --- イベント名の表示（シンプルなテキスト） ---
             countdownEventNameMainEl.textContent = `「${nextEvent.title}」まで`;
             countdownEventNameMainEl.style.cursor = 'pointer';
             countdownEventNameMainEl.classList.add('hover:underline');
@@ -424,32 +446,38 @@ document.addEventListener('DOMContentLoaded', function () {
                     remarks: nextEvent.remarks
                 });
             });
+            // --- イベント名設定ここまで ---
+
 
             // 日数に応じた色分け
             let colorClass = '';
             if (diffDays === 0) {
-                colorClass = 'countdown-today';
+                colorClass = 'today';
             } else if (diffDays <= 5) {
-                colorClass = 'countdown-near';
+                colorClass = 'near';
             }
-            countdownUnitMainEl.className = `text-3xl sm:text-4xl font-bold ${colorClass || 'text-gray-800'}`;
+            
+            if (colorClass) {
+                countdownTimerContainerMainEl.classList.add(colorClass);
+            }
+            
+            countdownUnitMainEl.className = `text-3xl sm:text-4xl font-bold text-gray-800`;
+
 
             // 数字の表示とアニメーション
             if (diffDays === 0) {
-                countdownTimerMainEl.innerHTML = `<span class="flipper-static animate-flip-in" style="animation-delay: 0s;">今</span><span class="flipper-static animate-flip-in" style="animation-delay: 0.1s;">日</span>`;
+                countdownTimerMainEl.innerHTML = `<span class="flipper-static animate-flip-in" style="animation-delay: 0.1s">今</span><span class="flipper-static animate-flip-in" style="animation-delay: 0.2s">日</span>`;
                 countdownUnitMainEl.textContent = 'です';
             } else {
                 const daysString = diffDays.toString().padStart(2, '0');
                 countdownTimerMainEl.innerHTML = `
-                    <span class="flipper-static animate-flip-in" style="animation-delay: 0s;">${daysString[0]}</span>
-                    <span class="flipper-static animate-flip-in" style="animation-delay: 0.1s;">${daysString[1]}</span>
+                    <span class="flipper-static animate-flip-in" style="animation-delay: 0.1s">${daysString[0]}</span>
+                    <span class="flipper-static animate-flip-in" style="animation-delay: 0.2s">${daysString[1]}</span>
                 `;
                 countdownUnitMainEl.textContent = '日';
             }
-
         } else {
-            // 表示する予定がない場合
-            countdownSectionMain.innerHTML = '<p class="text-lg text-gray-600 text-center">現在、直近の締切・重要予定はありません。</p>';
+            countdownSectionMain.style.display = 'none';
         }
     }
 
