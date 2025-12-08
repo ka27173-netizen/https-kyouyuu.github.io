@@ -1,323 +1,362 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>情報共有特設サイト</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans JP"', '"Inter"', 'sans-serif'],
+                    },
+                    colors: {
+                        indigo: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         /* カスタムスタイル */
-        html {
-            scroll-behavior: smooth;
-        }
         body {
-            font-family: 'Inter', 'Noto Sans JP', sans-serif;
-            background-color: #f8fafc; /* Tailwindのgray-50 */
+            background-color: #f3f4f6;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 24px 24px;
         }
-        /* 横スクロールコンテナのスクロールバーを非表示にし、スナップを効かせる */
+
+        /* スクロールバーのカスタマイズ */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c7c7c7; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+
+        /* カレンダー用スタイル */
         .calendar-scroll-container {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
             scroll-snap-type: x mandatory;
         }
         .calendar-scroll-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, and Opera */
+            display: none;
         }
         .calendar-month {
             scroll-snap-align: center;
         }
-        /* イベント用の基本スタイル */
+
+        /* イベントチップのデザイン強化 */
         .event {
-            font-size: 0.75rem; /* 12px */
-            padding: 2px 4px;
-            margin-top: 4px;
-            border-radius: 4px;
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            margin-top: 3px;
+            border-radius: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            border: 1px solid transparent;
+            border-left: 3px solid transparent;
             cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        /* 通常の予定 */
-        .event-normal {
-            background-color: #e0e7ff; /* indigo-100 */
-            color: #3730a3; /* indigo-800 */
-            border-color: #c7d2fe; /* indigo-200 */
+        .event:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            z-index: 10;
         }
-        /* 土曜日の予定 */
-        .event-saturday {
-            background-color: #cffafe; /* cyan-100 */
-            color: #0e7490; /* cyan-700 */
-            border-color: #a5f3fc; /* cyan-200 */
-        }
-        /* 優先度高の予定（オレンジ） */
-        .event-high-priority {
-            background-color: #fffbeb; /* amber-50 */
-            color: #b45309; /* amber-700 */
-            border-color: #fde68a; /* amber-200 */
-        }
-        /* 大事な予定（黒） */
-        .event-important {
-            background-color: #1f2937; /* gray-800 */
-            color: #f9fafb; /* gray-50 */
-        }
-        /* Webコンテストの予定（緑） */
-        .event-contest {
-            background-color: #dcfce7; /* green-100 */
-            color: #166534; /* green-800 */
-            border-color: #bbf7d0; /* green-200 */
-        }
-        /* 過去の日のイベント */
-        .past-day .event-normal, .past-day .event-saturday, .past-day .event-high-priority, .past-day .event-contest {
-            background-color: #e5e7eb; /* gray-200 */
-            color: #6b7280; /* gray-500 */
-            border-color: #d1d5db; /* gray-300 */
-        }
-         .past-day .event-important {
-            background-color: #6b7280; /* gray-500 */
-            color: #d1d5db; /* gray-300 */
-        }
-        /* Modal styles */
-        #event-modal, #event-modal-backdrop {
-            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-        }
-        #event-modal.hidden, #event-modal-backdrop.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        /* カウントダウンタイマーのスタイル (反転フラップ式) */
+
+        /* イベント配色 */
+        .event-normal { background: white; color: #4f46e5; border-left-color: #6366f1; }
+        .event-saturday { background: white; color: #0891b2; border-left-color: #06b6d4; }
+        .event-high-priority { background: #fffbeb; color: #b45309; border-left-color: #f59e0b; }
+        .event-important { background: #1f2937; color: #f9fafb; border-left-color: #000; }
+        .event-contest { background: #f0fdf4; color: #15803d; border-left-color: #22c55e; }
+
+        /* 過去のイベント */
+        .past-day .event { opacity: 0.6; filter: grayscale(0.8); }
+
+        /* カウントダウンフリッパー */
         .flipper-static {
-            position: relative; /* 疑似要素のため */
-            background-color: #1f2937; /* gray-800 */
-            color: #f9fafb; /* gray-50 */
-            padding: 0.75rem 1rem;
-            font-size: 2.5rem; /* 40px */
-            line-height: 1.5; /* 上下の余白を確保するため調整 */
-            font-weight: bold;
-            border-radius: 0.5rem; /* 8px */
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            position: relative;
+            background: linear-gradient(to bottom, #1f2937 50%, #111827 50%);
+            color: #f9fafb;
+            padding: 0.5rem 0.8rem;
+            font-size: 2.5rem;
+            line-height: 1.2;
+            font-weight: 800;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             text-align: center;
+            min-width: 60px;
         }
-        
-        /* 真ん中の分割線 */
-        .flipper-static::before {
+        .flipper-static::after {
             content: '';
             position: absolute;
             top: 50%;
-            left: 4px;
-            right: 4px;
-            height: 2px;
-            background-color: rgba(0, 0, 0, 0.4);
-            z-index: 10;
-            transform: translateY(-1px);
-        }
-
-        @media (min-width: 640px) {
-            .flipper-static {
-                padding: 1rem 1.5rem;
-                font-size: 3.75rem; /* 60px */
-            }
-        }
-
-        /* カウントダウン数字のアニメーション (反転フラップ式) */
-        @keyframes flipIn {
-            0% {
-                transform: perspective(400px) rotateX(90deg);
-                opacity: 0;
-            }
-            100% {
-                transform: perspective(400px) rotateX(0deg);
-                opacity: 1;
-            }
-        }
-        .animate-flip-in {
-            animation: flipIn 0.6s ease-out forwards;
-            opacity: 0;
-            backface-visibility: hidden; /* アニメーション中のちらつき防止 */
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
         
-        /* 締切間近のスタイル */
-        /* 5日前から */
+        /* 緊迫感のあるカラー */
         .countdown-timer-container-main.near .flipper-static {
-            background-color: #fef2f2; /* red-50 */
-            color: #dc2626; /* red-600 */
+            background: linear-gradient(to bottom, #ef4444 50%, #dc2626 50%);
         }
-        .countdown-timer-container-main.near #countdown-unit-main {
-            color: #dc2626; /* red-600 */
+        .countdown-timer-container-main.today .flipper-static {
+            background: linear-gradient(to bottom, #b91c1c 50%, #991b1b 50%);
+            animation: pulse 2s infinite;
         }
 
-        /* 当日 */
-        .countdown-timer-container-main.today .flipper-static {
-            background-color: #b91c1c; /* red-800 */
-            color: #fef2f2; /* red-50 */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
-        .countdown-timer-container-main.today #countdown-unit-main {
-            color: #b91c1c; /* red-800 */
-            font-weight: 700;
+
+        /* リンクカードのホバーエフェクト */
+        .link-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
-<body class="text-gray-800 pt-16">
+<body class="text-slate-700 antialiased pt-20 pb-12">
 
-    <header class="bg-white shadow-md fixed top-0 left-0 right-0 z-10">
-        <div class="container mx-auto px-4 md:px-8 max-w-7xl">
-            <nav class="flex justify-between items-center h-16">
-                <div class="text-xl font-bold text-indigo-600">
-                    情報共有ページ
+    <!-- ヘッダー (Glassmorphism) -->
+    <header class="fixed top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 md:px-8 max-w-7xl h-16 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-2 group" onclick="window.scrollTo(0,0)">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                 </div>
-                <div class="space-x-4 md:space-x-8">
-                    <a href="#notifications" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">連絡事項</a>
-                    <a href="#calendar" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">カレンダー</a>
-                    <a href="#links" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">リンク</a>
-                </div>
+                <span class="text-lg font-bold text-slate-800 tracking-tight">情報共有<span class="text-indigo-600">Portal</span></span>
+            </a>
+            
+            <nav class="hidden md:flex space-x-1 bg-slate-100/50 p-1 rounded-full">
+                <a href="#notifications" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-white transition-all">連絡事項</a>
+                <a href="#calendar" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-white transition-all">カレンダー</a>
+                <a href="#links" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-white transition-all">リンク集</a>
             </nav>
+
+            <!-- モバイル用メニューアイコン（簡易表示） -->
+            <div class="md:hidden flex space-x-4 text-sm font-medium text-slate-600">
+                <a href="#calendar">カレンダー</a>
+                <a href="#links">リンク</a>
+            </div>
         </div>
     </header>
 
-    <main class="container mx-auto p-4 md:p-8 max-w-7xl">
+    <main class="container mx-auto px-4 md:px-6 max-w-6xl space-y-12">
     
-        <!-- 0. カウントダウンタイマー (メイン：黒・緑) -->
-        <section id="countdown-main" class="mb-8 md:mb-12 pt-4">
-            <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200 text-center">
-                <h3 id="countdown-title-main" class="text-xl font-semibold text-gray-700 mb-4">次の締切・重要予定</h3>
-                <div class="flex justify-center items-baseline space-x-2 countdown-timer-container-main" id="countdown-timer-container-main">
-                    <div id="countdown-timer-main" class="flex justify-center items-center space-x-1 sm:space-x-2">
-                        <!-- JavaScriptによって数字がここに挿入されます -->
-                    </div>
-                    <span id="countdown-unit-main" class="text-3xl sm:text-4xl font-bold text-gray-800">日</span>
+        <!-- 0. カウントダウン (Hero Section) -->
+        <section id="countdown-main" class="relative overflow-hidden rounded-2xl bg-white shadow-glass border border-white/50 p-8 text-center transition-all duration-500 hover:shadow-lg">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+            
+            <h3 id="countdown-title-main" class="text-sm uppercase tracking-widest text-slate-500 font-bold mb-6">NEXT DEADLINE</h3>
+            
+            <div class="flex flex-col items-center justify-center">
+                <div id="countdown-event-name-main" class="text-2xl md:text-3xl font-bold text-slate-800 mb-6 cursor-pointer hover:text-indigo-600 transition-colors border-b-2 border-transparent hover:border-indigo-100 pb-1">
+                    <!-- イベント名 -->
                 </div>
-                <p id="countdown-event-name-main" class="mt-3 text-lg sm:text-xl text-indigo-600 font-bold"></p>
+
+                <div class="flex items-end justify-center gap-3 countdown-timer-container-main" id="countdown-timer-container-main">
+                    <div class="text-slate-400 font-medium mb-2 mr-2">あと</div>
+                    <div id="countdown-timer-main" class="flex justify-center items-center gap-2">
+                        <!-- 数字生成エリア -->
+                    </div>
+                    <span id="countdown-unit-main" class="text-2xl md:text-3xl font-bold text-slate-600 mb-1 ml-2">日</span>
+                </div>
             </div>
         </section>
 
-        <!-- 1. 連絡したいこと -->
-        <section id="notifications" class="mb-8 md:mb-12 pt-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
-                連絡事項
-            </h2>
-            <div class="space-y-4">
-                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-yellow-400">
-                    <p class="font-semibold text-gray-800">
-                        【重要】<a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">今年度のスケジュール</a>
-                        <span class="text-sm text-gray-600 font-normal ml-4">このページのパスワード 280075Wgq2</span>
+        <!-- 1. 連絡事項 -->
+        <section id="notifications">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-yellow-100 text-yellow-600 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">連絡事項</h2>
+            </div>
+            
+            <div class="grid gap-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-yellow-400 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start">
+                        <p class="font-bold text-slate-800 text-lg">
+                            【重要】<a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" class="text-indigo-600 hover:underline decoration-2 underline-offset-2">今年度のスケジュール</a>
+                        </p>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-medium">必須</span>
+                    </div>
+                    <p class="text-sm text-slate-500 mt-2 bg-slate-50 inline-block px-3 py-1 rounded border border-slate-100">
+                        <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                        パスワード: <span class="font-mono font-bold select-all">280075Wgq2</span>
                     </p>
                 </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                    <p class="font-semibold text-gray-800">【重要】HTML・CSSのコードのスペースは基本半角にしてください</p>
-                    <p class="text-sm text-gray-600 mt-1">半角にしなかった場合エラーが起きる可能性があります(こういう文章の中に全角スペースはいいですよ)</p>
-                    <p class="text-sm text-gray-600 mt-1">VSコードにこれを入れると便利ですよ <a href="https://qiita.com/Junpei_Takagi/items/3983cc735e71ea3917fd" class="text-indigo-600 hover:underline">https://qiita.com/Junpei_Takagi/items/3983cc735e71ea3917fd</a></p>
-                    <p class="text-sm text-gray-600 mt-1">これを入れるとエラーが起きそうな全角スペースの場所を赤色にしてくれます(さっきもいったけど文章の中の全角スペースはいいよ)</p>
+
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:border-indigo-200 transition-colors">
+                    <h3 class="font-bold text-slate-800 mb-2 flex items-center">
+                        <span class="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
+                        HTML・CSS コード規約
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-2">コードのスペースは基本<strong class="text-red-500">半角</strong>にしてください。全角はエラーの原因になります。</p>
+                    <a href="https://qiita.com/Junpei_Takagi/items/3983cc735e71ea3917fd" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        VSCode用 全角スペース可視化設定
+                    </a>
                 </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                    <p class="font-semibold text-gray-800">出典用のページを作成しました</p>
-                    <p class="text-sm text-gray-600 mt-1">syuten.htmlを出典用HPにします</p>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                    <p class="font-semibold text-gray-800">スライド・スライド原稿</p>
-                    <p class="text-sm text-gray-600 mt-1">ぱぱっとと終わらせてHP改善したいです</p>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                    <p class="font-semibold text-gray-800">ファイル構成を変更します</p>
-                    <p class="text-sm text-gray-600 mt-1">トップページをindex.htmlホームボタンを押して飛ぶトップページをhome.htmlにする予定です</p>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-xs text-slate-400 mb-1">Update</div>
+                        <p class="font-bold text-slate-800">出典用ページ作成</p>
+                        <p class="text-sm text-slate-500 mt-1">syuten.html</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-xs text-slate-400 mb-1">Task</div>
+                        <p class="font-bold text-slate-800">スライド原稿</p>
+                        <p class="text-sm text-slate-500 mt-1">早めに終わらせてHP改善へ</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-xs text-slate-400 mb-1">System</div>
+                        <p class="font-bold text-slate-800">ファイル構成変更予定</p>
+                        <p class="text-sm text-slate-500 mt-1">Top: index.html / Home: home.html</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 2. カレンダー機能 -->
-        <section id="calendar" class="mb-8 md:mb-12 pt-4">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect><line x1="16" x2="16" y1="2" y2="6"></line><line x1="8" x2="8" y1="2" y2="6"></line><line x1="3" x2="21" y1="10" y2="10"></line></svg>
-                    カレンダー
-                </h2>
-                <div class="flex space-x-2">
-                    <button id="prev-month" class="bg-indigo-600 text-white p-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform duration-150 active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+        <!-- 2. カレンダー -->
+        <section id="calendar">
+            <div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-6 gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">カレンダー</h2>
+                </div>
+                
+                <div class="flex items-center gap-2 bg-white p-1 rounded-full shadow-sm border border-slate-200">
+                    <button id="prev-month" class="w-10 h-10 flex items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 hover:text-indigo-600 transition-colors" aria-label="前月">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                     </button>
-                    <button id="next-month" class="bg-indigo-600 text-white p-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform duration-150 active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+                    <button id="current-month-btn" class="px-4 h-8 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors border-x border-slate-200">
+                        今日
+                    </button>
+                    <button id="next-month" class="w-10 h-10 flex items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 hover:text-indigo-600 transition-colors" aria-label="次月">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                     </button>
                 </div>
             </div>
             
-            <div id="calendar-scroll-container" class="calendar-scroll-container flex overflow-x-auto bg-white rounded-lg shadow-lg p-4 border border-gray-200">
-                <!-- カレンダーがここに動的に生成されます -->
+            <div class="relative bg-white rounded-2xl shadow-soft border border-slate-100 overflow-hidden">
+                <div id="calendar-scroll-container" class="calendar-scroll-container flex overflow-x-auto">
+                    <!-- カレンダーJS生成 -->
+                </div>
             </div>
         </section>
 
         <!-- 3. リンク一覧 -->
-        <section id="links" class="pt-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-indigo-600"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
-                リンク一覧
-            </h2>
+        <section id="links">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-teal-100 text-teal-600 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">リンク集</h2>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- 僕らが作ってるHP -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 md:col-span-2 lg:col-span-3">
-                    <h3 class="text-xl font-semibold text-indigo-700 mb-3">僕らが作ってるHP</h3>
-                    <ul class="space-y-2">
-                        <li><a href="file:///media/fuse/drivefs-ab8b5b3ed99213de0T5b56a773760e8/team_drives/%E4%B8%AD%E5%AD%A6%E6%8A%80%E8%A1%93%E7%A7%91%EF%BC%8BWeb%E3.82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/2025%E4%B8%AD2Web%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/25B07%E5%AE%88%E5%B1%8B%E5%B4%87%E7%A7%80/Actualperformance/top.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">トップページへ <span class="ml-1 text-xs">↗</span></a></li>
+                
+                <!-- Main Project -->
+                <div class="link-card bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 rounded-2xl text-white md:col-span-2 lg:col-span-3 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-white opacity-10 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        制作中のウェブサイト
+                    </h3>
+                    <ul class="space-y-3 relative z-10">
+                        <li>
+                            <a href="file:///media/fuse/drivefs-ab8b5b3ed99213de0T5b56a773760e8/team_drives/%E4%B8%AD%E5%AD%A6%E6%8A%80%E8%A1%93%E7%A7%91%EF%BC%8BWeb%E3.82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/2025%E4%B8%AD2Web%E3%82%B3%E3%83%B3%E3%83%86%E3%82%B9%E3%83%88/25B07%E5%AE%88%E5%B1%8B%E5%B4%87%E7%A7%80/Actualperformance/top.html" target="_blank" class="flex items-center justify-between bg-white/10 hover:bg-white/20 px-4 py-3 rounded-lg transition-colors border border-white/10">
+                                <span class="font-medium">トップページ (Actualperformance)</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </li>
                     </ul>
                 </div>
-                <!-- ドキュメント -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="text-xl font-semibold text-blue-700 mb-3">ドキュメント</h3>
-                    <ul class="space-y-2">
-                        <li><a href="https://docs.google.com/document/d/1H4mZVyTgOn_uucbsnx7yhpFL7TuT84JS1XSJW9t7OLg/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">HPに書く内容<span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="https://docs.google.com/document/d/1-p__bNjTk10BAiD1SSX4QLftd-tIYb_sD8ZLX6EtorY/edit?tab=t.0" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">B07発表原稿シート<span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="https://docs.google.com/document/d/1NS0wGDr8qWzUCs2MoJXeUxpnOkt1ux-q8kaGvXJK6Jc/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">スライドの原稿　大まかな内容<span class="ml-1 text-xs">↗</span></a></li>
+
+                <!-- Card Template -->
+                <div class="link-card bg-white p-6 rounded-2xl shadow-soft border border-slate-100">
+                    <h3 class="text-lg font-bold text-blue-600 mb-4 pb-2 border-b border-slate-100">ドキュメント</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="https://docs.google.com/document/d/1H4mZVyTgOn_uucbsnx7yhpFL7TuT84JS1XSJW9t7OLg/edit?usp=sharing" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">HPに書く内容</a></li>
+                        <li><a href="https://docs.google.com/document/d/1-p__bNjTk10BAiD1SSX4QLftd-tIYb_sD8ZLX6EtorY/edit?tab=t.0" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">B07発表原稿シート</a></li>
+                        <li><a href="https://docs.google.com/document/d/1NS0wGDr8qWzUCs2MoJXeUxpnOkt1ux-q8kaGvXJK6Jc/edit?usp=sharing" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">スライド原稿(大まか)</a></li>
                     </ul>
                 </div>
-                <!-- スライド -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="text-xl font-semibold text-orange-600 mb-3">スライド</h3>
-                    <ul class="space-y-2">
-                        <!-- 既存のB07発表スライド -->
-                        <li><a href="https://docs.google.com/presentation/d/1uk0yrDRlRE3riRvJ-Y7oLR537nh-eqgjAsGSlfsjHuE/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">B07発表スライド <span class="ml-1 text-xs">↗</span></a></li>
-                        <!-- 追加されたエコチルスライド -->
-                        <li><a href="https://docs.google.com/presentation/d/1SHobnO43MlsjMwDsag2PK9QeMfPYaNwzyRbAsP-T4MQ/edit" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">エコチルスライド <span class="ml-1 text-xs">↗</span></a></li>
+
+                <div class="link-card bg-white p-6 rounded-2xl shadow-soft border border-slate-100">
+                    <h3 class="text-lg font-bold text-orange-600 mb-4 pb-2 border-b border-slate-100">スライド</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="https://docs.google.com/presentation/d/1uk0yrDRlRE3riRvJ-Y7oLR537nh-eqgjAsGSlfsjHuE/edit?usp=sharing" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">B07発表スライド</a></li>
+                        <li><a href="https://docs.google.com/presentation/d/1SHobnO43MlsjMwDsag2PK9QeMfPYaNwzyRbAsP-T4MQ/edit" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">エコチルスライド</a></li>
                     </ul>
                 </div>
-                <!-- スプレッドシート -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="text-xl font-semibold text-green-700 mb-3">スプレッドシート</h3>
-                    <ul class="space-y-2">
-                        <li><a href="https://docs.google.com/spreadsheets/d/1n4ZSHqn7fsye8tMvatf0orqJIvPSCgzB4tFCH4KZZLE/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">HPの改善点(回答)<span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="https://docs.google.com/spreadsheets/d/1L-cnJNl7g_j2r2yUi89ereJFS1VkGi0UHnSze8cYwcA/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">外国人に向けたアンケート(回答)<span class="ml-1 text-xs">↗</span></a></li>
+
+                <div class="link-card bg-white p-6 rounded-2xl shadow-soft border border-slate-100">
+                    <h3 class="text-lg font-bold text-green-600 mb-4 pb-2 border-b border-slate-100">回答結果 (Sheets)</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="https://docs.google.com/spreadsheets/d/1n4ZSHqn7fsye8tMvatf0orqJIvPSCgzB4tFCH4KZZLE/edit?usp=sharing" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">HPの改善点</a></li>
+                        <li><a href="https://docs.google.com/spreadsheets/d/1L-cnJNl7g_j2r2yUi89ereJFS1VkGi0UHnSze8cYwcA/edit?usp=sharing" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">外国人向けアンケート</a></li>
                     </ul>
                 </div>
-                <!-- フォーム -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="text-xl font-semibold text-purple-700 mb-3">フォーム</h3>
-                    <ul class="space-y-2">
-                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe4KbW5mQQ-IkXeLNCWCMlkHDpdLkCkay08A6X1EvFbjNoEYg/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">HPの改善点<span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSedhvF_EvlkiKNTw5-Rfg9Jsf5b7KGas9hEtRhIVZygbkS40A/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">外国人に向けたアンケート<span class="ml-1 text-xs">↗</span></a></li>
+
+                <div class="link-card bg-white p-6 rounded-2xl shadow-soft border border-slate-100">
+                    <h3 class="text-lg font-bold text-purple-600 mb-4 pb-2 border-b border-slate-100">フォーム</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe4KbW5mQQ-IkXeLNCWCMlkHDpdLkCkay08A6X1EvFbjNoEYg/viewform?usp=header" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">HPの改善点 入力</a></li>
+                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSedhvF_EvlkiKNTw5-Rfg9Jsf5b7KGas9hEtRhIVZygbkS40A/viewform?usp=header" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">外国人向けアンケート 入力</a></li>
                     </ul>
                 </div>
-                <!-- ドライブ -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="text-xl font-semibold text-red-700 mb-3">ドライブ</h3>
-                    <ul class="space-y-2">
-                        <li><a href="https://drive.google.com/drive/folders/1V6d5EiszW-dLcywv0UvRTMjVaCGfoFqo" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">共有ドライブ(B07) <span class="ml-1 text-xs">↗</span></a></li>
+
+                <div class="link-card bg-white p-6 rounded-2xl shadow-soft border border-slate-100">
+                    <h3 class="text-lg font-bold text-red-600 mb-4 pb-2 border-b border-slate-100">Drive & Tools</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="https://drive.google.com/drive/folders/1V6d5EiszW-dLcywv0UvRTMjVaCGfoFqo" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">共有ドライブ (B07)</a></li>
+                        <li><a href="https://www.canva.com/" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">Canva</a></li>
+                        <li><a href="https://mail.google.com/chat/u/0/#chat/space/AAQAquQBKsk" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">Google Chat</a></li>
                     </ul>
                 </div>
-                <!-- よく使いそうなサイト -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="text-xl font-semibold text-teal-700 mb-3">よく使いそうなサイト</h3>
-                    <ul class="space-y-2">
-                        <li><a href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">Canva (デザインツール) <span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="https://mail.google.com/chat/u/0/#chat/space/AAQAquQBKsk" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">チャットツール <span class="ml-1 text-xs">↗</span></a></li>
-                        <li><a href="https://contest.japias.jp/tqj27/270096A/index.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">昆虫食が世界を救う <span class="ml-1 text-xs">↗</span></a></li>
-                    </ul>
-                </div>
-                <!-- その他 -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="text-xl font-semibold text-gray-600 mb-3">その他</h3>
-                    <ul class="space-y-2">
-                         <li><a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">今年度のスケジュール<span class="ml-1 text-xs">↗</span></a></li>
-                         <li><a href="https://webcon.japias.jp/rule.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline flex items-center">webコンのルール<span class="ml-1 text-xs">↗</span></a></li>
+
+                <div class="link-card bg-white p-6 rounded-2xl shadow-soft border border-slate-100">
+                    <h3 class="text-lg font-bold text-gray-600 mb-4 pb-2 border-b border-slate-100">その他</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">今年度のスケジュール</a></li>
+                        <li><a href="https://webcon.japias.jp/rule.html" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">Webコンテスト ルール</a></li>
+                        <li><a href="https://contest.japias.jp/tqj27/270096A/index.html" target="_blank" class="block text-slate-600 hover:text-indigo-600 hover:bg-slate-50 p-2 rounded transition-colors">参考: 昆虫食が世界を救う</a></li>
                     </ul>
                 </div>
             </div>
@@ -325,25 +364,51 @@
 
     </main>
     
+    <!-- Footer -->
+    <footer class="mt-20 border-t border-slate-200 bg-white py-8">
+        <div class="container mx-auto px-4 text-center text-slate-400 text-sm">
+            <p>© 2025 B07 Team Information Portal</p>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:bg-indigo-700 hover:shadow-xl transition-all z-20 opacity-80 hover:opacity-100" aria-label="トップへ戻る">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
+    
     <!-- Modal Backdrop -->
-    <div id="event-modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40"></div>
+    <div id="event-modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-40 transition-opacity duration-300 opacity-0"></div>
 
     <!-- Event Modal -->
-    <div id="event-modal" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl w-11/12 max-w-md p-6 z-50">
-        <h3 id="modal-title" class="text-2xl font-bold text-gray-900 mb-2">Event Title</h3>
-        <p id="modal-date" class="text-sm text-gray-500 mb-4">Event Date</p>
-        <div class="mb-4">
-            <h4 class="font-semibold text-gray-700 mb-2">備考欄</h4>
-            <p id="modal-remarks" class="text-gray-600 bg-gray-100 p-3 rounded-md min-h-[80px]">ここに備考が表示されます。</p>
+    <div id="event-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95 opacity-0 pointer-events-auto" id="event-modal-content">
+            <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
+                <h3 class="text-lg font-bold">イベント詳細</h3>
+                <button id="modal-close-btn" class="text-white/80 hover:text-white hover:bg-white/20 rounded-full p-1 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <h3 id="modal-title" class="text-2xl font-bold text-slate-800 mb-1 leading-tight">Event Title</h3>
+                <p id="modal-date" class="text-indigo-600 font-medium mb-6 flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Date
+                </p>
+                
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">MEMO</h4>
+                    <p id="modal-remarks" class="text-slate-600 text-sm leading-relaxed">備考</p>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 flex justify-end">
+                <button onclick="document.getElementById('modal-close-btn').click()" class="text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">閉じる</button>
+            </div>
         </div>
-        <button id="modal-close-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
     </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // --- イベントと祝日のデータ ---
+    // データ（変更なし）
     const holidays = [
         { year: 2025, month: 10, day: 3, name: '文化の日' },
         { year: 2025, month: 10, day: 24, name: '振替休日' },
@@ -382,9 +447,10 @@ document.addEventListener('DOMContentLoaded', function () {
         { year: 2026, month: 1, day: 21, title: '最終結果発表', type: 'contest', remarks: '授賞式' },
     ];
     
-    // --- モーダル機能 ---
+    // --- モーダル機能 (アニメーション改善) ---
     const modal = document.getElementById('event-modal');
     const backdrop = document.getElementById('event-modal-backdrop');
+    const modalContent = document.getElementById('event-modal-content');
     const modalTitle = document.getElementById('modal-title');
     const modalDate = document.getElementById('modal-date');
     const modalRemarks = document.getElementById('modal-remarks');
@@ -392,33 +458,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openEventModal(eventData) {
         modalTitle.textContent = eventData.title;
-        modalDate.textContent = `${eventData.year}年${eventData.month + 1}月${eventData.day}日`;
-        modalRemarks.textContent = eventData.remarks || '特にありません。';
+        modalDate.innerHTML = `<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>${eventData.year}年${eventData.month + 1}月${eventData.day}日`;
+        modalRemarks.textContent = eventData.remarks || '特記事項なし';
+        
         modal.classList.remove('hidden');
         backdrop.classList.remove('hidden');
+        
+        // アニメーション用クラス適用
+        requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        });
     }
 
     function closeModal() {
-        modal.classList.add('hidden');
-        backdrop.classList.add('hidden');
+        backdrop.classList.add('opacity-0');
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            backdrop.classList.add('hidden');
+        }, 300); // Transition duration matches CSS
     }
 
     closeModalBtn.addEventListener('click', closeModal);
     backdrop.addEventListener('click', closeModal);
 
-    // --- カウントダウン機能 ---
+    // --- カウントダウン機能 (変更なし、デザインのみCSSで調整) ---
     function setupCountdown() {
-        // --- メインタイマー（黒＋緑）の要素 ---
         const countdownTimerMainEl = document.getElementById('countdown-timer-main');
         const countdownEventNameMainEl = document.getElementById('countdown-event-name-main');
         const countdownSectionMain = document.getElementById('countdown-main');
         const countdownUnitMainEl = document.getElementById('countdown-unit-main');
         const countdownTimerContainerMainEl = document.getElementById('countdown-timer-container-main');
 
-        const today = new Date(); // 常に実際の日付を取得
-        today.setHours(0, 0, 0, 0); // 時刻をリセットして日付のみで比較
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        // メインタイマー用のイベント（黒＋緑）
         const importantMainEvents = events.filter(e => e.type === 'important' || e.type === 'contest');
         
         const upcomingMainEvents = importantMainEvents
@@ -432,12 +510,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const diffTime = targetDate - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            // --- イベント名の表示（シンプルなテキスト） ---
-            countdownEventNameMainEl.textContent = `「${nextEvent.title}」まで`;
-            countdownEventNameMainEl.style.cursor = 'pointer';
-            countdownEventNameMainEl.classList.add('hover:underline');
+            countdownEventNameMainEl.textContent = `${nextEvent.title}`;
             
-            countdownEventNameMainEl.addEventListener('click', () => {
+            countdownEventNameMainEl.onclick = () => {
                 openEventModal({
                     title: nextEvent.title,
                     year: nextEvent.date.getFullYear(),
@@ -445,74 +520,67 @@ document.addEventListener('DOMContentLoaded', function () {
                     day: nextEvent.date.getDate(),
                     remarks: nextEvent.remarks
                 });
-            });
-            // --- イベント名設定ここまで ---
+            };
 
-
-            // 日数に応じた色分け
             let colorClass = '';
-            if (diffDays === 0) {
-                colorClass = 'today';
-            } else if (diffDays <= 5) {
-                colorClass = 'near';
-            }
+            if (diffDays === 0) colorClass = 'today';
+            else if (diffDays <= 5) colorClass = 'near';
             
-            if (colorClass) {
-                countdownTimerContainerMainEl.classList.add(colorClass);
-            }
-            
-            countdownUnitMainEl.className = `text-3xl sm:text-4xl font-bold text-gray-800`;
+            if (colorClass) countdownTimerContainerMainEl.classList.add(colorClass);
 
-
-            // 数字の表示とアニメーション
             if (diffDays === 0) {
-                countdownTimerMainEl.innerHTML = `<span class="flipper-static animate-flip-in" style="animation-delay: 0.1s">今</span><span class="flipper-static animate-flip-in" style="animation-delay: 0.2s">日</span>`;
-                countdownUnitMainEl.textContent = 'です';
+                countdownTimerMainEl.innerHTML = `<span class="flipper-static">今</span><span class="flipper-static">日</span>`;
+                countdownUnitMainEl.textContent = 'です!!';
+                countdownUnitMainEl.className = "text-3xl font-bold text-red-600 animate-pulse";
             } else {
                 const daysString = diffDays.toString().padStart(2, '0');
                 countdownTimerMainEl.innerHTML = `
-                    <span class="flipper-static animate-flip-in" style="animation-delay: 0.1s">${daysString[0]}</span>
-                    <span class="flipper-static animate-flip-in" style="animation-delay: 0.2s">${daysString[1]}</span>
+                    <span class="flipper-static">${daysString[0]}</span>
+                    <span class="flipper-static">${daysString[1]}</span>
                 `;
-                countdownUnitMainEl.textContent = '日';
             }
         } else {
             countdownSectionMain.style.display = 'none';
         }
     }
 
-    // --- カレンダー機能 ---
+    // --- カレンダー機能 (Tailwindクラス調整) ---
     const calendarContainer = document.getElementById('calendar-scroll-container');
     const prevButton = document.getElementById('prev-month');
     const nextButton = document.getElementById('next-month');
+    const currentButton = document.getElementById('current-month-btn');
     const startDate = new Date(2025, 9, 1);
     const endDate = new Date(2026, 2, 1);
 
     function createMonthCalendar(year, month) {
         const monthDiv = document.createElement('div');
-        monthDiv.className = 'calendar-month flex-shrink-0 w-full p-2';
+        monthDiv.className = 'calendar-month flex-shrink-0 w-full p-4 md:p-6';
         const monthName = new Date(year, month).toLocaleString('ja-JP', { year: 'numeric', month: 'long' });
-        let html = `<div class="text-center mb-4"><h3 class="text-xl font-semibold">${monthName}</h3></div>`;
-        html += '<table class="w-full text-sm text-center border-collapse table-fixed">';
-        html += '<thead><tr class="text-gray-600">';
+        
+        let html = `<div class="text-center mb-6"><h3 class="text-xl md:text-2xl font-bold text-slate-800 tracking-wider border-b-2 border-indigo-100 inline-block pb-1">${monthName}</h3></div>`;
+        html += '<div class="overflow-hidden rounded-xl border border-slate-200 shadow-sm">';
+        html += '<table class="w-full text-sm text-center border-collapse table-fixed bg-white">';
+        html += '<thead class="bg-slate-50 text-slate-500 font-medium"><tr class="h-10">';
         const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
         weekdays.forEach((day, i) => {
             let colorClass = '';
-            if (i === 0) colorClass = 'text-red-500';
-            if (i === 6) colorClass = 'text-blue-500';
-            html += `<th class="p-2 w-1/7 border-b ${colorClass}">${day}</th>`;
+            if (i === 0) colorClass = 'text-red-500 bg-red-50/50';
+            if (i === 6) colorClass = 'text-blue-500 bg-blue-50/50';
+            html += `<th class="w-1/7 border-b border-r border-slate-200 last:border-r-0 ${colorClass}">${day}</th>`;
         });
-        html += '</tr></thead><tbody>';
-        const firstDay = new Date(year, month, 1).getDay();
+        html += '</tr></thead><tbody class="text-slate-700">';
+        
         const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDay = new Date(year, month, 1).getDay();
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         let date = 1;
+        
         for (let i = 0; i < 6; i++) {
             html += '<tr>';
             for (let j = 0; j < 7; j++) {
                 if (i === 0 && j < firstDay || date > daysInMonth) {
-                    html += '<td class="border p-1"></td>';
+                    html += '<td class="border-b border-r border-slate-100 bg-slate-50/30 h-24 md:h-28 align-top p-1"></td>';
                 } else {
                     const currentDate = new Date(year, month, date);
                     currentDate.setHours(0, 0, 0, 0);
@@ -525,30 +593,29 @@ document.addEventListener('DOMContentLoaded', function () {
                     const isHoliday = holiday || isSportsDay;
 
                     if (holiday) {
-                        const holidayTextColor = isPast ? 'text-gray-400' : 'text-red-700';
-                        holidayName = `<div class="text-xs ${holidayTextColor} truncate">${holiday.name}</div>`;
+                        holidayName = `<div class="text-[10px] text-red-500 font-medium truncate mt-0.5">${holiday.name}</div>`;
                     } else if (isSportsDay) {
-                        const holidayTextColor = isPast ? 'text-gray-400' : 'text-red-700';
-                        holidayName = `<div class="text-xs ${holidayTextColor} truncate">スポーツの日</div>`;
+                        holidayName = `<div class="text-[10px] text-red-500 font-medium truncate mt-0.5">スポーツの日</div>`;
                     }
                     
-                    if (isHoliday) tdClass = 'bg-red-100';
-                    else if (dayOfWeek === 0) tdClass = 'bg-red-100';
-                    else if (dayOfWeek === 6) tdClass = 'bg-blue-100';
+                    // 背景色
+                    if (isHoliday || dayOfWeek === 0) tdClass = 'bg-red-50/30';
+                    else if (dayOfWeek === 6) tdClass = 'bg-blue-50/30';
 
+                    // 文字色
                     if (isPast) {
                         tdClass += ' past-day';
-                        dateTextClass = 'text-gray-400';
+                        dateTextClass = 'text-slate-400';
                     } else {
-                        if (isHoliday) dateTextClass = 'text-red-700';
-                        else if (dayOfWeek === 0) dateTextClass = 'text-red-500';
-                        else if (dayOfWeek === 6) dateTextClass = 'text-blue-500';
-                        else dateTextClass = 'text-gray-800';
+                        if (isHoliday || dayOfWeek === 0) dateTextClass = 'text-red-600 font-medium';
+                        else if (dayOfWeek === 6) dateTextClass = 'text-blue-600 font-medium';
+                        else dateTextClass = 'text-slate-700';
                     }
 
                     if (isToday) {
-                        dateDivClass = 'bg-indigo-600 rounded-full';
+                        dateDivClass = 'bg-indigo-600 rounded-full text-white shadow-md';
                         dateTextClass = 'text-white font-bold';
+                        tdClass = tdClass.replace('bg-red-50/30', '').replace('bg-blue-50/30', '') + ' bg-indigo-50/20';
                     }
                     
                     const dayEvents = events.filter(e => e.year === year && e.month === month && e.day === date);
@@ -557,6 +624,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (dayOfWeek === 6 && isNotNov8th && isNotOct25th) {
                         dayEvents.push({ title: 'Worldday', type: 'saturday', remarks: '定例のWorlddayです。' });
                     }
+                    
                     let eventHtml = dayEvents.map(e => {
                         let eventClass = '';
                         switch(e.type) {
@@ -566,22 +634,27 @@ document.addEventListener('DOMContentLoaded', function () {
                             case 'contest': eventClass = 'event-contest'; break;
                             default: eventClass = 'event-normal';
                         }
-                        const remarks = e.remarks || '';
                         return `<div class="event ${eventClass}" 
-                                     title="${e.title}" 
                                      data-title="${e.title}"
                                      data-year="${year}"
                                      data-month="${month}"
                                      data-day="${date}"
-                                     data-remarks="${remarks}"
+                                     data-remarks="${e.remarks || ''}"
                                      >${e.title}</div>`;
                     }).join('');
-                    html += `<td class="border p-1 h-24 align-top ${tdClass.trim()}">
-                                <div class="w-7 h-7 mx-auto flex items-center justify-center ${dateDivClass}">
-                                    <span class="font-medium ${dateTextClass}">${date}</span>
+
+                    html += `<td class="border-b border-r border-slate-200 last:border-r-0 h-24 md:h-28 align-top p-1 transition-colors hover:bg-white ${tdClass}">
+                                <div class="flex flex-col h-full">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <div class="w-6 h-6 flex items-center justify-center ${dateDivClass} text-sm">
+                                            <span class="${dateTextClass}">${date}</span>
+                                        </div>
+                                        ${holidayName}
+                                    </div>
+                                    <div class="flex-grow overflow-y-auto space-y-0.5 custom-scrollbar">
+                                        ${eventHtml}
+                                    </div>
                                 </div>
-                                ${holidayName}
-                                ${eventHtml}
                              </td>`;
                     date++;
                 }
@@ -589,21 +662,49 @@ document.addEventListener('DOMContentLoaded', function () {
             html += '</tr>';
             if (date > daysInMonth) break;
         }
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
         monthDiv.innerHTML = html;
         return monthDiv;
     }
 
     let calDate = new Date(startDate);
+    const today = new Date();
+    let currentMonthIndex = 0;
+    let index = 0;
+
     while (calDate <= endDate) {
+        // 現在の月を記録
+        if (calDate.getMonth() === today.getMonth() && calDate.getFullYear() === today.getFullYear()) {
+            currentMonthIndex = index;
+        }
+        
         const monthCalendar = createMonthCalendar(calDate.getFullYear(), calDate.getMonth());
         calendarContainer.appendChild(monthCalendar);
         calDate.setMonth(calDate.getMonth() + 1);
+        index++;
     }
+
     const scrollMonth = () => calendarContainer.querySelector('.calendar-month').offsetWidth;
+    
+    // スクロール操作
     nextButton.addEventListener('click', () => calendarContainer.scrollBy({ left: scrollMonth(), behavior: 'smooth' }));
     prevButton.addEventListener('click', () => calendarContainer.scrollBy({ left: -scrollMonth(), behavior: 'smooth' }));
+    
+    // 今月へジャンプ
+    currentButton.addEventListener('click', () => {
+        const monthWidth = scrollMonth();
+        calendarContainer.scrollTo({ left: monthWidth * currentMonthIndex, behavior: 'smooth' });
+    });
+    
+    // 初期表示で今月を表示
+    setTimeout(() => {
+        const monthWidth = scrollMonth();
+        if (calendarContainer.scrollLeft === 0 && currentMonthIndex > 0) {
+           calendarContainer.scrollTo({ left: monthWidth * currentMonthIndex, behavior: 'auto' });
+        }
+    }, 100);
 
+    // イベントクリック
     calendarContainer.addEventListener('click', function(e) {
         const eventEl = e.target.closest('.event');
         if (eventEl) {
@@ -617,10 +718,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // --- ページの初期化処理 ---
     setupCountdown();
 });
 </script>
 </body>
 </html>
-
