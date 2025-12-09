@@ -8,16 +8,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
-            darkMode: 'class', // ダークモードをクラス切り替えで有効化
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
                         sans: ['"Noto Sans JP"', '"Inter"', 'sans-serif'],
                     },
                     colors: {
+                        // プロジェクトテーマカラー定義
+                        brand: {
+                            cyan: '#8CCAC8',
+                            teal: '#1EB090',
+                            ice: '#D6ECEF',
+                            blue: '#3B82F6',
+                            dark: '#334155',
+                        },
                         indigo: {
                             50: '#eef2ff',
                             100: '#e0e7ff',
+                            500: '#6366f1',
                             600: '#4f46e5',
                             700: '#4338ca',
                         },
@@ -29,323 +38,307 @@
                         }
                     },
                     boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'soft': '0 4px 30px rgba(0, 0, 0, 0.04)',
                         'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+                        'card': '0 2px 10px rgba(0, 0, 0, 0.03)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
         }
     </script>
     <style>
-        /* カスタムスタイル */
         body {
-            background-color: #f3f4f6;
-            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-            background-size: 24px 24px;
+            background-color: #f8fafc; /* より明るいクリーンな背景 */
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(140, 202, 200, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(30, 176, 144, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
             transition: background-color 0.3s ease;
         }
 
-        /* ダークモード時の背景 */
         .dark body {
             background-color: #0f172a;
-            background-image: radial-gradient(#1e293b 1px, transparent 1px);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(140, 202, 200, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(30, 176, 144, 0.05) 0px, transparent 50%);
         }
 
-        /* スクロールバーのカスタマイズ */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        .dark ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c7c7c7; 
-            border-radius: 4px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #475569;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8; 
-        }
+        /* スクロールバー */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* カレンダー用スタイル */
+        /* カレンダー横スクロール */
         .calendar-scroll-container {
             -ms-overflow-style: none;
             scrollbar-width: none;
             scroll-snap-type: x mandatory;
         }
-        .calendar-scroll-container::-webkit-scrollbar {
-            display: none;
-        }
-        .calendar-month {
-            scroll-snap-align: center;
-        }
+        .calendar-scroll-container::-webkit-scrollbar { display: none; }
+        .calendar-month { scroll-snap-align: center; }
 
-        /* イベントチップのデザイン強化 */
+        /* イベントチップ */
         .event {
-            font-size: 0.7rem;
-            padding: 3px 6px;
-            margin-top: 3px;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            margin-top: 4px;
             border-radius: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             border-left: 3px solid transparent;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
         }
         .event:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             z-index: 10;
         }
 
-        /* イベント配色 */
-        .event-normal { background: white; color: #4f46e5; border-left-color: #6366f1; }
-        .event-saturday { background: white; color: #0891b2; border-left-color: #06b6d4; }
-        .event-high-priority { background: #fffbeb; color: #b45309; border-left-color: #f59e0b; }
-        .event-important { background: #1f2937; color: #f9fafb; border-left-color: #000; }
-        .event-contest { background: #f0fdf4; color: #15803d; border-left-color: #22c55e; }
+        /* 配色設定 (テーマカラー適用) */
+        .event-normal { background: #f1f5f9; color: #475569; border-left-color: #94a3b8; }
+        .event-saturday { background: #eff6ff; color: #3b82f6; border-left-color: #3b82f6; }
+        .event-high-priority { background: #fff7ed; color: #c2410c; border-left-color: #f97316; }
+        .event-important { background: #f0fdf4; color: #15803d; border-left-color: #22c55e; }
+        .event-contest { background: #fdf4ff; color: #a21caf; border-left-color: #d946ef; }
 
-        /* ダークモード時のイベント配色調整 */
-        .dark .event-normal { background: #334155; color: #818cf8; border-left-color: #6366f1; }
-        .dark .event-saturday { background: #334155; color: #22d3ee; border-left-color: #06b6d4; }
-        .dark .event-high-priority { background: #451a03; color: #fbbf24; border-left-color: #f59e0b; }
-        .dark .event-important { background: #020617; color: #f8fafc; border-left-color: #94a3b8; }
-        .dark .event-contest { background: #052e16; color: #4ade80; border-left-color: #22c55e; }
+        /* Dark mode colors */
+        .dark .event-normal { background: #1e293b; color: #94a3b8; border-left-color: #475569; }
+        .dark .event-saturday { background: #172554; color: #60a5fa; border-left-color: #3b82f6; }
+        .dark .event-high-priority { background: #431407; color: #fb923c; border-left-color: #f97316; }
+        .dark .event-important { background: #052e16; color: #4ade80; border-left-color: #22c55e; }
+        .dark .event-contest { background: #4a044e; color: #e879f9; border-left-color: #d946ef; }
 
+        .past-day .event { opacity: 0.5; filter: grayscale(1); }
 
-        /* 過去のイベント */
-        .past-day .event { opacity: 0.6; filter: grayscale(0.8); }
-
-        /* カウントダウンフリッパー */
-        .flipper-static {
-            position: relative;
-            background: linear-gradient(to bottom, #1f2937 50%, #111827 50%);
-            color: #f9fafb;
-            padding: 0.5rem 0.8rem;
-            font-size: 2.5rem;
-            line-height: 1.2;
-            font-weight: 800;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            text-align: center;
-            min-width: 60px;
+        /* カードホバーエフェクト */
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
-        .dark .flipper-static {
-            box-shadow: 0 4px 6px rgba(0,0,0,0.6);
+        .hover-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+            border-color: #8CCAC8;
+        }
+
+        /* カウントダウンタイマー */
+        .flipper-static {
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            color: #fff;
+            padding: 0.6rem 1rem;
+            font-size: 3rem;
+            line-height: 1;
+            font-weight: 700;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-width: 70px;
+            display: inline-block;
+            position: relative;
         }
         .flipper-static::after {
-            content: '';
+            content: "";
             position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
+            top: 50%; left: 0; right: 0; height: 1px;
             background: rgba(255,255,255,0.1);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
-        
-        /* 緊迫感のあるカラー */
-        .countdown-timer-container-main.near .flipper-static {
-            background: linear-gradient(to bottom, #ef4444 50%, #dc2626 50%);
+        .near .flipper-static {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
         }
-        .countdown-timer-container-main.today .flipper-static {
-            background: linear-gradient(to bottom, #b91c1c 50%, #991b1b 50%);
+        .today .flipper-static {
+            background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        /* セクション見出しの装飾 */
+        .section-header {
+            position: relative;
+            padding-left: 1rem;
         }
-
-        /* リンクカードのホバーエフェクト */
-        .link-card {
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .link-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* カラーパレット用 */
-        .color-swatch {
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .color-swatch:active {
-            transform: scale(0.95);
-        }
-
-        /* カラーピッカーのカスタマイズ */
-        input[type="color"] {
-            -webkit-appearance: none;
-            border: none;
-            padding: 0;
-        }
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-        input[type="color"]::-webkit-color-swatch {
-            border: none;
-            border-radius: 0.5rem;
+        .section-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 70%;
+            background: #1EB090; /* Brand Teal */
+            border-radius: 2px;
         }
         
-        /* ToDoリストのアニメーション */
-        .todo-item {
-            transition: all 0.3s ease;
-        }
-        .todo-item.completed span {
-            text-decoration: line-through;
-            color: #94a3b8;
-        }
-        .dark .todo-item.completed span {
-            color: #64748b;
-        }
+        /* カラーピッカー */
+        input[type="color"] { -webkit-appearance: none; border: none; padding: 0; }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 0.5rem; }
     </style>
 </head>
-<body class="text-slate-700 dark:text-dark-text antialiased pt-20 pb-12 transition-colors duration-300">
+<body class="text-slate-600 dark:text-slate-300 antialiased pt-24 pb-20 selection:bg-brand-cyan/30 selection:text-brand-dark">
 
-    <!-- ヘッダー (Glassmorphism) -->
-    <header class="fixed top-0 left-0 right-0 z-30 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-white/20 dark:border-slate-700 shadow-sm transition-all duration-300">
-        <div class="container mx-auto px-4 md:px-8 max-w-7xl h-16 flex justify-between items-center">
-            <a href="#" class="flex items-center gap-2 group" onclick="window.scrollTo(0,0)">
-                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+    <!-- ナビゲーションバー -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-xl border-b border-slate-200/60 dark:border-slate-700/60 shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 md:px-8 max-w-7xl h-20 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-3 group" onclick="window.scrollTo(0,0)">
+                <div class="w-10 h-10 bg-gradient-to-br from-brand-cyan to-brand-teal rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-teal/20 group-hover:scale-105 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                 </div>
-                <span class="text-lg font-bold text-slate-800 dark:text-white tracking-tight hidden sm:inline">情報共有<span class="text-indigo-600 dark:text-indigo-400">Portal</span></span>
+                <div class="flex flex-col">
+                    <span class="text-lg font-bold text-slate-800 dark:text-white leading-tight tracking-tight">情報共有<span class="text-brand-teal">Portal</span></span>
+                    <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-widest">Team B07</span>
+                </div>
             </a>
             
-            <!-- 時計 (表示を常に有効化) -->
-            <div id="realtime-clock" class="font-mono text-lg md:text-xl font-bold text-slate-700 dark:text-slate-300 tracking-widest bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-md border border-slate-200 dark:border-slate-700 shadow-sm">
+            <!-- 時計 (モバイル対応・デザイン調整) -->
+            <div id="realtime-clock" class="hidden sm:block font-mono text-xl font-bold text-slate-700 dark:text-slate-200 tracking-wider bg-slate-100/50 dark:bg-slate-800/50 px-4 py-1.5 rounded-lg border border-slate-200/50 dark:border-slate-700/50 backdrop-blur-sm">
                 00:00:00
             </div>
             
-            <div class="flex items-center gap-4">
-                <nav class="hidden md:flex space-x-1 bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-full">
-                    <a href="#notifications" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-700 transition-all">連絡</a>
-                    <a href="#calendar" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-700 transition-all">予定</a>
-                    <a href="#links" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-700 transition-all">リンク</a>
-                    <a href="#design-system" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-700 transition-all">素材</a>
+            <div class="flex items-center gap-2 md:gap-4">
+                <nav class="hidden md:flex bg-slate-100/80 dark:bg-slate-800/80 p-1.5 rounded-full border border-slate-200/50 dark:border-slate-700">
+                    <a href="#notifications" class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-teal dark:hover:text-brand-cyan hover:bg-white dark:hover:bg-slate-700 transition-all">連絡</a>
+                    <a href="#calendar" class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-teal dark:hover:text-brand-cyan hover:bg-white dark:hover:bg-slate-700 transition-all">予定</a>
+                    <a href="#links" class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-teal dark:hover:text-brand-cyan hover:bg-white dark:hover:bg-slate-700 transition-all">リンク</a>
+                    <a href="#design-system" class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-teal dark:hover:text-brand-cyan hover:bg-white dark:hover:bg-slate-700 transition-all">素材</a>
                 </nav>
 
-                <!-- ダークモードトグル (NEW) -->
-                <button id="dark-mode-toggle" class="p-2 rounded-full text-slate-500 dark:text-yellow-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="ダークモード切替">
-                    <!-- Sun Icon -->
+                <button id="dark-mode-toggle" class="w-10 h-10 flex items-center justify-center rounded-full text-slate-500 dark:text-brand-cyan bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all" title="テーマ切り替え">
                     <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <!-- Moon Icon -->
                     <svg id="moon-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
             </div>
         </div>
+        <!-- モバイル用時計 (ヘッダー下に配置) -->
+        <div class="sm:hidden bg-white/95 dark:bg-dark-bg/95 border-b border-slate-100 dark:border-slate-800 py-1 text-center">
+            <span id="realtime-clock-mobile" class="font-mono text-sm font-bold text-brand-teal dark:text-brand-cyan tracking-widest">00:00:00</span>
+        </div>
     </header>
 
-    <main class="container mx-auto px-4 md:px-6 max-w-6xl space-y-12">
+    <main class="container mx-auto px-4 md:px-6 max-w-6xl space-y-16">
     
         <!-- 0. カウントダウン (Hero Section) -->
-        <section id="countdown-main" class="relative overflow-hidden rounded-2xl bg-white dark:bg-dark-card shadow-glass border border-white/50 dark:border-slate-700 p-8 text-center transition-all duration-500 hover:shadow-lg">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+        <section id="countdown-main" class="relative overflow-hidden rounded-3xl bg-white dark:bg-dark-card shadow-soft border border-slate-100 dark:border-slate-700 p-8 md:p-12 text-center transition-all duration-500 hover:shadow-lg group">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-cyan via-brand-teal to-brand-blue"></div>
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-brand-ice dark:bg-slate-800 rounded-full blur-3xl opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
             
-            <h3 id="countdown-title-main" class="text-sm uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-6">NEXT DEADLINE</h3>
-            
-            <div class="flex flex-col items-center justify-center">
-                <div id="countdown-event-name-main" class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-6 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors border-b-2 border-transparent hover:border-indigo-100 pb-1">
-                    <!-- イベント名 -->
-                </div>
-
-                <div class="flex items-end justify-center gap-3 countdown-timer-container-main" id="countdown-timer-container-main">
-                    <div class="text-slate-400 dark:text-slate-500 font-medium mb-2 mr-2">あと</div>
-                    <div id="countdown-timer-main" class="flex justify-center items-center gap-2">
-                        <!-- 数字生成エリア -->
+            <div class="relative z-10">
+                <h3 id="countdown-title-main" class="text-xs md:text-sm font-bold text-brand-teal dark:text-brand-cyan uppercase tracking-[0.2em] mb-4 bg-brand-ice/50 dark:bg-slate-800/50 inline-block px-3 py-1 rounded-full">Next Deadline</h3>
+                
+                <div class="flex flex-col items-center justify-center mb-8">
+                    <div id="countdown-event-name-main" class="text-3xl md:text-5xl font-bold text-slate-800 dark:text-white mb-8 cursor-pointer hover:text-brand-teal transition-colors" title="詳細を見る">
+                        <!-- イベント名 -->
                     </div>
-                    <span id="countdown-unit-main" class="text-2xl md:text-3xl font-bold text-slate-600 dark:text-slate-300 mb-1 ml-2">日</span>
+
+                    <div class="flex items-end justify-center gap-4 countdown-timer-container-main" id="countdown-timer-container-main">
+                        <div class="text-slate-400 dark:text-slate-500 font-bold mb-3">あと</div>
+                        <div id="countdown-timer-main" class="flex justify-center items-center gap-3">
+                            <!-- 数字生成エリア -->
+                        </div>
+                        <span id="countdown-unit-main" class="text-2xl md:text-3xl font-bold text-slate-600 dark:text-slate-400 mb-2">日</span>
+                    </div>
                 </div>
+                <p class="text-sm text-slate-400 dark:text-slate-500">※ イベント名をクリックすると詳細が表示されます</p>
             </div>
         </section>
 
         <!-- 1. 連絡事項 -->
-        <section id="notifications">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="p-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800 dark:text-white">連絡事項</h2>
+        <section id="notifications" class="animate-fade-in">
+            <div class="flex items-center justify-between mb-8 section-header">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">連絡事項</h2>
+                <span class="text-sm font-medium text-slate-400 bg-white dark:bg-slate-800 px-3 py-1 rounded-full shadow-sm border border-slate-100 dark:border-slate-700">Check Daily</span>
             </div>
             
-            <div class="grid gap-4">
-                <!-- 新しいお知らせ -->
-                <div id="renewal-notification" class="bg-white dark:bg-dark-card p-5 rounded-xl shadow-sm border-l-4 border-indigo-500 hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start">
-                        <p class="font-bold text-slate-800 dark:text-white text-lg">
-                            情報共有ページをリニューアルしました
-                        </p>
-                        <span class="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-300 text-xs px-2 py-1 rounded font-medium">New</span>
-                    </div>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">デザインを一新し、カラー作成機能やToDo機能を追加しました。</p>
-                </div>
-
-                <div class="bg-white dark:bg-dark-card p-5 rounded-xl shadow-sm border-l-4 border-yellow-400 hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start">
-                        <p class="font-bold text-slate-800 dark:text-white text-lg">
-                            【重要】<a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" class="text-indigo-600 dark:text-indigo-400 hover:underline decoration-2 underline-offset-2">今年度のスケジュール</a>
-                        </p>
-                        <span class="bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 text-xs px-2 py-1 rounded font-medium">必須</span>
-                    </div>
-                    <div class="mt-2 flex items-center gap-2">
-                        <div class="text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 inline-flex items-center px-3 py-1 rounded border border-slate-100 dark:border-slate-700">
-                            <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
-                            パスワード: <span class="font-mono font-bold select-all text-slate-700 dark:text-slate-300 mx-1">280075Wgq2</span>
+            <div class="grid gap-5">
+                <!-- 新しいお知らせ (機能更新) -->
+                <div id="renewal-notification" class="bg-gradient-to-r from-white to-brand-ice/30 dark:from-dark-card dark:to-slate-800/50 p-6 rounded-2xl shadow-card border border-brand-ice dark:border-slate-700 hover-card relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-brand-cyan/20 rounded-bl-full -mr-8 -mt-8"></div>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="bg-brand-teal text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Update</span>
+                                <h3 class="font-bold text-slate-800 dark:text-white text-lg">情報共有ページをリニューアルしました</h3>
+                            </div>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">デザインを一新し、カラーパレット機能やToDoリストを追加。より使いやすくなりました。</p>
                         </div>
-                        <button onclick="copyPassword(this, '280075Wgq2')" class="text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 border border-slate-200 dark:border-slate-700 rounded p-1.5 transition-all group relative" title="パスワードをコピー">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        </button>
+                        <div class="text-right">
+                            <span class="text-xs font-mono text-slate-400">2025.12.09</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-dark-card p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-800 transition-colors">
-                    <h3 class="font-bold text-slate-800 dark:text-white mb-2 flex items-center">
-                        <span class="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
-                        HTML・CSS コード規約
-                    </h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">コードのスペースは基本<strong class="text-red-500 dark:text-red-400">半角</strong>にしてください。全角はエラーの原因になります。</p>
+                <!-- 重要通知 -->
+                <div class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-card border-l-4 border-yellow-400 hover-card">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider border border-yellow-200 dark:border-yellow-800">Must</span>
+                                <h3 class="font-bold text-slate-800 dark:text-white text-lg group">
+                                    <a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" class="hover:text-brand-teal transition-colors flex items-center gap-2">
+                                        今年度のスケジュール
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                    </a>
+                                </h3>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-0 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-1">
+                            <div class="px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                Pass: <span class="font-mono font-bold text-slate-700 dark:text-slate-200">280075Wgq2</span>
+                            </div>
+                            <button onclick="copyPassword(this, '280075Wgq2')" class="px-3 py-1.5 text-slate-400 hover:text-brand-teal hover:bg-white dark:hover:bg-slate-800 rounded-md transition-all" title="コピー">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- 通常通知 -->
+                <div class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-700 hover-card">
+                    <div class="flex items-start gap-4">
+                        <div class="p-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 rounded-lg shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 dark:text-white mb-1">HTML・CSS コード規約</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">コードのインデントにはスペースを使用し、<strong class="text-brand-teal border-b border-brand-teal/50">半角英数字</strong>で記述してください。全角スペースはエラーの原因となります。</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- 2. カレンダー -->
         <section id="calendar">
-            <div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-6 gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-800 dark:text-white">カレンダー</h2>
-                </div>
+            <div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-4 section-header">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">カレンダー</h2>
                 
-                <div class="flex items-center gap-2 bg-white dark:bg-dark-card p-1 rounded-full shadow-sm border border-slate-200 dark:border-slate-700">
-                    <button id="prev-month" class="w-10 h-10 flex items-center justify-center rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" aria-label="前月">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                <div class="flex items-center gap-1 bg-white dark:bg-dark-card p-1 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <button id="prev-month" class="w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 hover:bg-brand-ice hover:text-brand-teal transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                     </button>
-                    <button id="current-month-btn" class="px-4 h-8 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors border-x border-slate-200 dark:border-slate-700">
-                        今日
+                    <button id="current-month-btn" class="px-4 h-9 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand-teal transition-colors">
+                        Today
                     </button>
-                    <button id="next-month" class="w-10 h-10 flex items-center justify-center rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" aria-label="次月">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                    <button id="next-month" class="w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 hover:bg-brand-ice hover:text-brand-teal transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                     </button>
                 </div>
             </div>
             
-            <div class="relative bg-white dark:bg-dark-card rounded-2xl shadow-soft border border-slate-100 dark:border-slate-700 overflow-hidden">
-                <div id="calendar-scroll-container" class="calendar-scroll-container flex overflow-x-auto">
+            <div class="relative bg-white dark:bg-dark-card rounded-3xl shadow-soft border border-slate-100 dark:border-slate-700 overflow-hidden">
+                <div id="calendar-scroll-container" class="calendar-scroll-container flex overflow-x-auto snap-x">
                     <!-- カレンダーJS生成 -->
                 </div>
             </div>
@@ -353,80 +346,83 @@
 
         <!-- 3. リンク一覧 -->
         <section id="links">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="p-2 bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800 dark:text-white">リンク集</h2>
+            <div class="flex items-center justify-between mb-8 section-header">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">リンク集</h2>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Main Project -->
-                <div class="link-card bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 rounded-2xl text-white md:col-span-2 lg:col-span-3 relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-white opacity-10 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        制作中のウェブサイト
-                    </h3>
-                    <ul class="space-y-3 relative z-10">
-                        <li>
-                            <a href="https://contest.japias.jp/tqj28/280075W/" target="_blank" class="flex items-center justify-between bg-white/10 hover:bg-white/20 px-4 py-3 rounded-lg transition-colors border border-white/10">
-                                <span class="font-medium">トップページ (Actualperformance)</span>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                        </li>
+                <!-- Main Project (強調表示) -->
+                <div class="hover-card bg-gradient-to-br from-brand-dark to-slate-800 p-8 rounded-3xl text-white md:col-span-2 lg:col-span-3 relative overflow-hidden group shadow-lg">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-brand-teal/20 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-700"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2 text-brand-cyan font-bold text-sm uppercase tracking-widest">
+                                <span class="w-2 h-2 bg-brand-cyan rounded-full animate-pulse"></span>
+                                Work In Progress
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">制作中のウェブサイト</h3>
+                            <p class="text-slate-300 text-sm">Actualperformance トップページ</p>
+                        </div>
+                        <a href="https://contest.japias.jp/tqj28/280075W/" target="_blank" class="inline-flex items-center justify-center px-6 py-3 bg-brand-teal hover:bg-brand-cyan text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-brand-teal/50 group-hover:translate-x-1">
+                            サイトを開く
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- リンクカード -->
+                <div class="hover-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-700 flex flex-col h-full">
+                    <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+                        <div class="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 011.414.586l5.414 5.414a1 1 0 01.586 1.414V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 dark:text-white">ドキュメント</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm flex-grow">
+                        <li><a href="https://docs.google.com/document/d/1H4mZVyTgOn_uucbsnx7yhpFL7TuT84JS1XSJW9t7OLg/edit?usp=sharing" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>HPに書く内容</a></li>
+                        <li><a href="https://docs.google.com/document/d/1-p__bNjTk10BAiD1SSX4QLftd-tIYb_sD8ZLX6EtorY/edit?tab=t.0" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>B07発表原稿シート</a></li>
+                        <li><a href="https://docs.google.com/document/d/1NS0wGDr8qWzUCs2MoJXeUxpnOkt1ux-q8kaGvXJK6Jc/edit?usp=sharing" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>スライド原稿(大まか)</a></li>
                     </ul>
                 </div>
 
-                <!-- 各種カード -->
-                <div class="link-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-blue-600 dark:text-blue-400 mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">ドキュメント</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="https://docs.google.com/document/d/1H4mZVyTgOn_uucbsnx7yhpFL7TuT84JS1XSJW9t7OLg/edit?usp=sharing" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">HPに書く内容</a></li>
-                        <li><a href="https://docs.google.com/document/d/1-p__bNjTk10BAiD1SSX4QLftd-tIYb_sD8ZLX6EtorY/edit?tab=t.0" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">B07発表原稿シート</a></li>
-                        <li><a href="https://docs.google.com/document/d/1NS0wGDr8qWzUCs2MoJXeUxpnOkt1ux-q8kaGvXJK6Jc/edit?usp=sharing" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">スライド原稿(大まか)</a></li>
+                <div class="hover-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-700 flex flex-col h-full">
+                    <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+                        <div class="p-2 bg-orange-50 dark:bg-orange-900/20 text-orange-500 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 dark:text-white">スライド</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm flex-grow">
+                        <li><a href="https://docs.google.com/presentation/d/1uk0yrDRlRE3riRvJ-Y7oLR537nh-eqgjAsGSlfsjHuE/edit?usp=sharing" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-orange-400 rounded-full mr-2"></span>B07発表スライド</a></li>
+                        <li><a href="https://docs.google.com/presentation/d/1SHobnO43MlsjMwDsag2PK9QeMfPYaNwzyRbAsP-T4MQ/edit" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-orange-400 rounded-full mr-2"></span>エコチルスライド</a></li>
                     </ul>
                 </div>
 
-                <div class="link-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-orange-600 dark:text-orange-400 mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">スライド</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="https://docs.google.com/presentation/d/1uk0yrDRlRE3riRvJ-Y7oLR537nh-eqgjAsGSlfsjHuE/edit?usp=sharing" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">B07発表スライド</a></li>
-                        <li><a href="https://docs.google.com/presentation/d/1SHobnO43MlsjMwDsag2PK9QeMfPYaNwzyRbAsP-T4MQ/edit" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">エコチルスライド</a></li>
+                <div class="hover-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-700 flex flex-col h-full">
+                    <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+                        <div class="p-2 bg-green-50 dark:bg-green-900/20 text-green-500 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 dark:text-white">回答 & フォーム</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm flex-grow">
+                        <li><a href="https://docs.google.com/spreadsheets/d/1n4ZSHqn7fsye8tMvatf0orqJIvPSCgzB4tFCH4KZZLE/edit?usp=sharing" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-green-400 rounded-full mr-2"></span>HPの改善点(Sheet)</a></li>
+                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe4KbW5mQQ-IkXeLNCWCMlkHDpdLkCkay08A6X1EvFbjNoEYg/viewform?usp=header" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>HPの改善点(Form)</a></li>
+                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSedhvF_EvlkiKNTw5-Rfg9Jsf5b7KGas9hEtRhIVZygbkS40A/viewform?usp=header" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>外国人向けアンケート</a></li>
                     </ul>
                 </div>
 
-                <div class="link-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-green-600 dark:text-green-400 mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">回答結果 (Sheets)</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="https://docs.google.com/spreadsheets/d/1n4ZSHqn7fsye8tMvatf0orqJIvPSCgzB4tFCH4KZZLE/edit?usp=sharing" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">HPの改善点</a></li>
-                        <li><a href="https://docs.google.com/spreadsheets/d/1L-cnJNl7g_j2r2yUi89ereJFS1VkGi0UHnSze8cYwcA/edit?usp=sharing" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">外国人向けアンケート</a></li>
-                    </ul>
-                </div>
-
-                <div class="link-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-purple-600 dark:text-purple-400 mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">フォーム</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe4KbW5mQQ-IkXeLNCWCMlkHDpdLkCkay08A6X1EvFbjNoEYg/viewform?usp=header" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">HPの改善点 入力</a></li>
-                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSedhvF_EvlkiKNTw5-Rfg9Jsf5b7KGas9hEtRhIVZygbkS40A/viewform?usp=header" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">外国人向けアンケート 入力</a></li>
-                    </ul>
-                </div>
-
-                <div class="link-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-red-600 dark:text-red-400 mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">Drive & Tools</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="https://drive.google.com/drive/folders/1V6d5EiszW-dLcywv0UvRTMjVaCGfoFqo" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">共有ドライブ (B07)</a></li>
-                        <li><a href="https://www.canva.com/" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">Canva</a></li>
-                        <li><a href="https://mail.google.com/chat/u/0/#chat/space/AAQAquQBKsk" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">Google Chat</a></li>
-                    </ul>
-                </div>
-
-                <div class="link-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-gray-600 dark:text-gray-400 mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">その他</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">今年度のスケジュール</a></li>
-                        <li><a href="https://webcon.japias.jp/rule.html" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">Webコンテスト ルール</a></li>
-                        <li><a href="https://contest.japias.jp/tqj27/270096A/index.html" target="_blank" class="block text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded transition-colors">参考: 昆虫食が世界を救う</a></li>
+                <div class="hover-card bg-white dark:bg-dark-card p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-700 flex flex-col h-full">
+                    <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+                        <div class="p-2 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 dark:text-white">Tools & Others</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm flex-grow">
+                        <li><a href="https://drive.google.com/drive/folders/1V6d5EiszW-dLcywv0UvRTMjVaCGfoFqo" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-red-400 rounded-full mr-2"></span>共有ドライブ (B07)</a></li>
+                        <li><a href="https://www.canva.com/" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full mr-2"></span>Canva</a></li>
+                        <li><a href="https://jnk4.org/JAPIAS-DBx/WebContest/myPage/?p=x17xi80375jt" target="_blank" class="flex items-center p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-ice/50 hover:text-brand-dark transition-colors"><span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></span>今年度のスケジュール</a></li>
                     </ul>
                 </div>
             </div>
@@ -434,160 +430,114 @@
 
         <!-- 4. デザイン共有 (機能強化版) -->
         <section id="design-system">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="p-2 bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800 dark:text-white">デザイン素材</h2>
+            <div class="flex items-center justify-between mb-8 section-header">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">デザイン素材</h2>
             </div>
             
-            <div class="bg-white dark:bg-dark-card rounded-2xl shadow-soft border border-slate-100 dark:border-slate-700 p-6">
-                <div class="max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-dark-card rounded-3xl shadow-soft border border-slate-100 dark:border-slate-700 p-8">
+                <div class="max-w-5xl mx-auto">
                     
-                    <!-- 1. プロジェクトテーマカラー (画像から抽出) -->
-                    <div class="mb-10">
-                        <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 border-l-4 border-indigo-500 pl-3">Project Theme Colors <span class="text-xs font-normal text-slate-400 ml-2">(現在のHPで使用中)</span></h3>
+                    <!-- 1. プロジェクトテーマカラー -->
+                    <div class="mb-12">
+                        <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Main Theme Colors</h3>
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                            <!-- Theme Colors (Code maintained from previous version) -->
                             <!-- Header Blue -->
                             <div class="color-swatch flex flex-col group cursor-pointer" onclick="copyText(this, '#8CCAC8')">
-                                <div class="h-24 rounded-2xl shadow-sm bg-[#8CCAC8] mb-3 ring-2 ring-transparent group-hover:ring-teal-300 transition-all flex items-end p-2">
+                                <div class="h-28 rounded-2xl shadow-sm bg-[#8CCAC8] mb-3 ring-4 ring-transparent group-hover:ring-brand-ice transition-all flex items-end p-3">
                                     <span class="bg-white/90 text-[#8CCAC8] text-[10px] font-bold px-2 py-1 rounded shadow-sm">Header</span>
                                 </div>
-                                <div class="flex justify-between items-end px-1">
+                                <div class="flex justify-between items-center px-1">
                                     <div>
-                                        <span class="block text-xs font-bold text-slate-700 dark:text-slate-200">Cyan Blue</span>
-                                        <span class="font-mono text-[10px] text-slate-500 dark:text-slate-400">#8CCAC8</span>
+                                        <span class="block text-xs font-bold text-slate-700 dark:text-slate-200">Cyan</span>
+                                        <span class="font-mono text-[10px] text-slate-400">#8CCAC8</span>
                                     </div>
-                                    <div class="text-slate-300 group-hover:text-indigo-500 transition-colors"><i class="fa-regular fa-copy"></i></div>
+                                    <button class="text-slate-300 group-hover:text-brand-teal transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
                                 </div>
                             </div>
-
-                            <!-- Footer Green -->
+                            <!-- Footer -->
                             <div class="color-swatch flex flex-col group cursor-pointer" onclick="copyText(this, '#1EB090')">
-                                <div class="h-24 rounded-2xl shadow-sm bg-[#1EB090] mb-3 ring-2 ring-transparent group-hover:ring-emerald-300 transition-all flex items-end p-2">
+                                <div class="h-28 rounded-2xl shadow-sm bg-[#1EB090] mb-3 ring-4 ring-transparent group-hover:ring-emerald-100 transition-all flex items-end p-3">
                                     <span class="bg-white/90 text-[#1EB090] text-[10px] font-bold px-2 py-1 rounded shadow-sm">Footer</span>
                                 </div>
-                                <div class="flex justify-between items-end px-1">
+                                <div class="flex justify-between items-center px-1">
                                     <div>
                                         <span class="block text-xs font-bold text-slate-700 dark:text-slate-200">Emerald</span>
-                                        <span class="font-mono text-[10px] text-slate-500 dark:text-slate-400">#1EB090</span>
+                                        <span class="font-mono text-[10px] text-slate-400">#1EB090</span>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Background Light -->
+                            <!-- Bg -->
                             <div class="color-swatch flex flex-col group cursor-pointer" onclick="copyText(this, '#D6ECEF')">
-                                <div class="h-24 rounded-2xl shadow-sm bg-[#D6ECEF] mb-3 border border-slate-200 dark:border-slate-600 ring-2 ring-transparent group-hover:ring-cyan-200 transition-all flex items-end p-2">
-                                    <span class="bg-white/90 text-slate-500 text-[10px] font-bold px-2 py-1 rounded shadow-sm">Bg Main</span>
+                                <div class="h-28 rounded-2xl shadow-sm bg-[#D6ECEF] mb-3 border border-slate-100 dark:border-slate-600 ring-4 ring-transparent group-hover:ring-slate-100 transition-all flex items-end p-3">
+                                    <span class="bg-white/90 text-slate-500 text-[10px] font-bold px-2 py-1 rounded shadow-sm">Bg</span>
                                 </div>
-                                <div class="flex justify-between items-end px-1">
+                                <div class="flex justify-between items-center px-1">
                                     <div>
-                                        <span class="block text-xs font-bold text-slate-700 dark:text-slate-200">Ice Blue</span>
-                                        <span class="font-mono text-[10px] text-slate-500 dark:text-slate-400">#D6ECEF</span>
+                                        <span class="block text-xs font-bold text-slate-700 dark:text-slate-200">Ice</span>
+                                        <span class="font-mono text-[10px] text-slate-400">#D6ECEF</span>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Button Blue -->
+                            <!-- Button -->
                             <div class="color-swatch flex flex-col group cursor-pointer" onclick="copyText(this, '#3B82F6')">
-                                <div class="h-24 rounded-2xl shadow-sm bg-[#3B82F6] mb-3 ring-2 ring-transparent group-hover:ring-blue-300 transition-all flex items-end p-2">
-                                    <span class="bg-white/90 text-[#3B82F6] text-[10px] font-bold px-2 py-1 rounded shadow-sm">Button</span>
+                                <div class="h-28 rounded-2xl shadow-sm bg-[#3B82F6] mb-3 ring-4 ring-transparent group-hover:ring-blue-100 transition-all flex items-end p-3">
+                                    <span class="bg-white/90 text-[#3B82F6] text-[10px] font-bold px-2 py-1 rounded shadow-sm">Action</span>
                                 </div>
-                                <div class="flex justify-between items-end px-1">
+                                <div class="flex justify-between items-center px-1">
                                     <div>
-                                        <span class="block text-xs font-bold text-slate-700 dark:text-slate-200">Active Blue</span>
-                                        <span class="font-mono text-[10px] text-slate-500 dark:text-slate-400">#3B82F6</span>
+                                        <span class="block text-xs font-bold text-slate-700 dark:text-slate-200">Blue</span>
+                                        <span class="font-mono text-[10px] text-slate-400">#3B82F6</span>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Text Dark -->
+                            <!-- Text -->
                             <div class="color-swatch flex flex-col group cursor-pointer" onclick="copyText(this, '#334155')">
-                                <div class="h-24 rounded-2xl shadow-sm bg-[#334155] mb-3 ring-2 ring-transparent group-hover:ring-slate-400 transition-all flex items-end p-2">
+                                <div class="h-28 rounded-2xl shadow-sm bg-[#334155] mb-3 ring-4 ring-transparent group-hover:ring-slate-200 transition-all flex items-end p-3">
                                     <span class="bg-white/90 text-[#334155] text-[10px] font-bold px-2 py-1 rounded shadow-sm">Text</span>
                                 </div>
-                                <div class="flex justify-between items-end px-1">
+                                <div class="flex justify-between items-center px-1">
                                     <div>
-                                        <span class="block text-xs font-bold text-slate-700 dark:text-slate-200">Slate Dark</span>
-                                        <span class="font-mono text-[10px] text-slate-500 dark:text-slate-400">#334155</span>
+                                        <span class="block text-xs font-bold text-slate-700 dark:text-slate-200">Dark</span>
+                                        <span class="font-mono text-[10px] text-slate-400">#334155</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 2. Standard Presets (汎用カラー) -->
-                    <div class="mb-10">
-                        <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 border-l-4 border-slate-300 pl-3">Standard Utility Colors</h3>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-                            <!-- Accent Colors -->
-                            <div class="color-swatch flex flex-col items-center group p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" onclick="copyText(this, '#22c55e')">
-                                <div class="w-10 h-10 rounded-full shadow-sm bg-green-500 mb-2 ring-2 ring-transparent group-hover:ring-green-300 transition-all"></div>
-                                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400">Success</span>
-                                <span class="font-mono text-[9px] text-slate-400 dark:text-slate-500">#22c55e</span>
-                            </div>
-                            <div class="color-swatch flex flex-col items-center group p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" onclick="copyText(this, '#ef4444')">
-                                <div class="w-10 h-10 rounded-full shadow-sm bg-red-500 mb-2 ring-2 ring-transparent group-hover:ring-red-300 transition-all"></div>
-                                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400">Error</span>
-                                <span class="font-mono text-[9px] text-slate-400 dark:text-slate-500">#ef4444</span>
-                            </div>
-                            <div class="color-swatch flex flex-col items-center group p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" onclick="copyText(this, '#eab308')">
-                                <div class="w-10 h-10 rounded-full shadow-sm bg-yellow-500 mb-2 ring-2 ring-transparent group-hover:ring-yellow-300 transition-all"></div>
-                                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400">Warning</span>
-                                <span class="font-mono text-[9px] text-slate-400 dark:text-slate-500">#eab308</span>
-                            </div>
-                            <div class="color-swatch flex flex-col items-center group p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" onclick="copyText(this, '#a855f7')">
-                                <div class="w-10 h-10 rounded-full shadow-sm bg-purple-500 mb-2 ring-2 ring-transparent group-hover:ring-purple-300 transition-all"></div>
-                                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400">Accent</span>
-                                <span class="font-mono text-[9px] text-slate-400 dark:text-slate-500">#a855f7</span>
-                            </div>
-                            <div class="color-swatch flex flex-col items-center group p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" onclick="copyText(this, '#ec4899')">
-                                <div class="w-10 h-10 rounded-full shadow-sm bg-pink-500 mb-2 ring-2 ring-transparent group-hover:ring-pink-300 transition-all"></div>
-                                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400">Pink</span>
-                                <span class="font-mono text-[9px] text-slate-400 dark:text-slate-500">#ec4899</span>
-                            </div>
-                            <div class="color-swatch flex flex-col items-center group p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" onclick="copyText(this, '#14b8a6')">
-                                <div class="w-10 h-10 rounded-full shadow-sm bg-teal-500 mb-2 ring-2 ring-transparent group-hover:ring-teal-300 transition-all"></div>
-                                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400">Teal</span>
-                                <span class="font-mono text-[9px] text-slate-400 dark:text-slate-500">#14b8a6</span>
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <!-- Standard Colors -->
+                        <div class="flex-1">
+                            <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">Standard Colors</h3>
+                            <div class="flex flex-wrap gap-3">
+                                <div class="w-10 h-10 rounded-full bg-green-500 cursor-pointer hover:scale-110 transition-transform shadow-sm" title="Success: #22c55e" onclick="copyText(this, '#22c55e')"></div>
+                                <div class="w-10 h-10 rounded-full bg-red-500 cursor-pointer hover:scale-110 transition-transform shadow-sm" title="Error: #ef4444" onclick="copyText(this, '#ef4444')"></div>
+                                <div class="w-10 h-10 rounded-full bg-yellow-500 cursor-pointer hover:scale-110 transition-transform shadow-sm" title="Warning: #eab308" onclick="copyText(this, '#eab308')"></div>
+                                <div class="w-10 h-10 rounded-full bg-purple-500 cursor-pointer hover:scale-110 transition-transform shadow-sm" title="Accent: #a855f7" onclick="copyText(this, '#a855f7')"></div>
+                                <div class="w-10 h-10 rounded-full bg-pink-500 cursor-pointer hover:scale-110 transition-transform shadow-sm" title="Pink: #ec4899" onclick="copyText(this, '#ec4899')"></div>
+                                <div class="w-10 h-10 rounded-full bg-teal-500 cursor-pointer hover:scale-110 transition-transform shadow-sm" title="Teal: #14b8a6" onclick="copyText(this, '#14b8a6')"></div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- 3. カラー作成ツール -->
-                    <div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700">
-                        <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-6 text-center">Color Generator</h3>
-                        
-                        <div class="flex flex-col md:flex-row gap-8 justify-center items-center">
-                            <!-- プレビューとピッカー -->
-                            <div class="flex gap-6 items-center">
-                                <div class="relative group">
+
+                        <!-- Color Generator -->
+                        <div class="flex-1 border-l border-slate-100 dark:border-slate-700 pl-0 md:pl-8 pt-8 md:pt-0 border-t md:border-t-0">
+                            <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">Generator</h3>
+                            <div class="flex items-center gap-4">
+                                <div class="relative w-16 h-16 shrink-0 group">
                                     <input type="color" id="color-picker" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10" value="#6366f1">
-                                    <div id="color-preview" class="w-24 h-24 rounded-2xl shadow-lg bg-indigo-500 border-4 border-white dark:border-slate-600 transition-colors ring-4 ring-slate-100 dark:ring-slate-800"></div>
-                                    <div class="absolute -bottom-2 -right-2 bg-white dark:bg-slate-700 p-2 rounded-full shadow-md text-slate-500 dark:text-slate-300 pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
-                                    </div>
+                                    <div id="color-preview" class="w-full h-full rounded-2xl shadow-md bg-indigo-500 border-2 border-white dark:border-slate-600 ring-2 ring-slate-100 dark:ring-slate-800 transition-colors"></div>
                                 </div>
-                                <div class="text-left">
-                                    <p class="text-xs text-slate-400 dark:text-slate-500 mb-1 font-bold tracking-wider uppercase">Preview</p>
-                                    <h4 class="text-lg font-bold text-slate-700 dark:text-white">Custom Color</h4>
-                                    <p class="text-xs text-slate-500">円をクリックして色を選択</p>
+                                <div class="flex-1 grid grid-cols-2 gap-2">
+                                    <button class="bg-slate-50 dark:bg-slate-800 px-3 py-2 rounded-lg text-xs font-mono text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-white transition-colors text-left" onclick="copyColorCode('hex')">
+                                        <span class="text-[10px] text-slate-400 block">HEX</span>
+                                        <span id="hex-code">#6366f1</span>
+                                    </button>
+                                    <button class="bg-slate-50 dark:bg-slate-800 px-3 py-2 rounded-lg text-xs font-mono text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-white transition-colors text-left truncate" onclick="copyColorCode('rgb')">
+                                        <span class="text-[10px] text-slate-400 block">RGB</span>
+                                        <span id="rgb-code">rgb(99, 102, 241)</span>
+                                    </button>
                                 </div>
-                            </div>
-                            
-                            <!-- コード表示とコピー -->
-                            <div class="flex gap-3 w-full max-w-sm">
-                                <button class="flex-1 group bg-slate-50 dark:bg-slate-800 p-3 rounded-xl text-center cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 border border-slate-200 dark:border-slate-700 transition-all relative overflow-hidden" onclick="copyColorCode('hex')">
-                                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">HEX</span>
-                                    <p id="hex-code" class="font-mono font-bold text-slate-800 dark:text-white text-lg">#6366f1</p>
-                                    <div class="absolute inset-0 flex items-center justify-center bg-indigo-500 text-white opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs tracking-wider">COPY HEX</div>
-                                </button>
-                                
-                                <button class="flex-1 group bg-slate-50 dark:bg-slate-800 p-3 rounded-xl text-center cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 border border-slate-200 dark:border-slate-700 transition-all relative overflow-hidden" onclick="copyColorCode('rgb')">
-                                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">RGB</span>
-                                    <p id="rgb-code" class="font-mono font-bold text-slate-800 dark:text-white text-sm mt-1.5">rgb(99, 102, 241)</p>
-                                    <div class="absolute inset-0 flex items-center justify-center bg-indigo-500 text-white opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs tracking-wider">COPY RGB</div>
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -595,26 +545,25 @@
             </div>
         </section>
 
-        <!-- 5. ToDoリスト (NEW) -->
+        <!-- 5. ToDoリスト -->
         <section id="todo-app">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800 dark:text-white">自分用メモ <span class="text-sm font-normal text-slate-500 dark:text-slate-400 ml-2">(ブラウザに保存されます)</span></h2>
+            <div class="flex items-center justify-between mb-8 section-header">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">自分用メモ</h2>
             </div>
             
-            <div class="bg-white dark:bg-dark-card rounded-2xl shadow-soft border border-slate-100 dark:border-slate-700 p-6">
-                <div class="flex gap-2 mb-6">
-                    <input type="text" id="todo-input" class="flex-1 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="タスクを入力...">
-                    <button id="add-todo-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">追加</button>
+            <div class="bg-white dark:bg-dark-card rounded-3xl shadow-soft border border-slate-100 dark:border-slate-700 p-6 md:p-8">
+                <div class="flex gap-3 mb-6">
+                    <input type="text" id="todo-input" class="flex-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition-all" placeholder="新しいタスクを追加...">
+                    <button id="add-todo-btn" class="bg-brand-teal hover:bg-brand-cyan text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg shadow-brand-teal/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    </button>
                 </div>
                 
-                <ul id="todo-list" class="space-y-2">
-                    <!-- タスクがここに追加されます -->
+                <ul id="todo-list" class="space-y-3">
+                    <!-- JSで生成 -->
                 </ul>
-                <div id="todo-empty" class="text-center text-slate-400 dark:text-slate-500 py-4 text-sm">
-                    タスクはありません
+                <div id="todo-empty" class="text-center py-12 text-slate-400 dark:text-slate-500 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+                    <p class="text-sm">タスクはありません</p>
                 </div>
             </div>
         </section>
@@ -622,42 +571,46 @@
     </main>
     
     <!-- Footer -->
-    <footer class="mt-20 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-dark-card py-8 transition-colors duration-300">
-        <div class="container mx-auto px-4 text-center text-slate-400 dark:text-slate-500 text-sm">
+    <footer class="mt-24 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-dark-card py-12 transition-colors duration-300">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
             <p>© 2025 B07 Team Information Portal</p>
+            <div class="flex gap-6">
+                <span class="hover:text-brand-teal cursor-pointer transition-colors">Privacy</span>
+                <span class="hover:text-brand-teal cursor-pointer transition-colors">Contact</span>
+            </div>
         </div>
     </footer>
 
     <!-- Back to top button -->
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:bg-indigo-700 hover:shadow-xl transition-all z-20 opacity-80 hover:opacity-100" aria-label="トップへ戻る">
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-8 right-8 w-12 h-12 bg-brand-teal hover:bg-brand-cyan text-white rounded-full shadow-lg shadow-brand-teal/30 hover:shadow-xl transition-all z-40 flex items-center justify-center hover:-translate-y-1">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
     </button>
     
-    <!-- Modal Backdrop -->
-    <div id="event-modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-40 transition-opacity duration-300 opacity-0"></div>
-
-    <!-- Event Modal -->
+    <!-- Modal Backdrop & Modal -->
+    <div id="event-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 transition-opacity duration-300 opacity-0"></div>
     <div id="event-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95 opacity-0 pointer-events-auto border border-slate-100 dark:border-slate-700" id="event-modal-content">
-            <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
-                <h3 class="text-lg font-bold">イベント詳細</h3>
-                <button id="modal-close-btn" class="text-white/80 hover:text-white hover:bg-white/20 rounded-full p-1 transition-colors">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95 opacity-0 pointer-events-auto border border-white/20" id="event-modal-content">
+            <div class="bg-gradient-to-r from-brand-teal to-brand-cyan p-6 text-white flex justify-between items-start">
+                <div>
+                    <span class="inline-block bg-white/20 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider mb-2">Event Detail</span>
+                    <h3 class="text-xl font-bold leading-tight" id="modal-title">Event Title</h3>
+                </div>
+                <button id="modal-close-btn" class="text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-1.5 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
-            <div class="p-6">
-                <h3 id="modal-title" class="text-2xl font-bold text-slate-800 dark:text-white mb-1 leading-tight">Event Title</h3>
-                <p id="modal-date" class="text-indigo-600 dark:text-indigo-400 font-medium mb-6 flex items-center">
+            <div class="p-6 md:p-8">
+                <p id="modal-date" class="text-brand-teal dark:text-brand-cyan font-bold text-lg mb-6 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     Date
                 </p>
-                
-                <div class="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-700">
-                    <h4 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">MEMO</h4>
-                    <p id="modal-remarks" class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">備考</p>
+                <div class="bg-slate-50 dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-700">
+                    <h4 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        Memo
+                    </h4>
+                    <p id="modal-remarks" class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">備考</p>
                 </div>
-            </div>
-            <div class="bg-slate-50 dark:bg-slate-900 px-6 py-4 flex justify-end">
-                <button onclick="document.getElementById('modal-close-btn').click()" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">閉じる</button>
             </div>
         </div>
     </div>
@@ -703,11 +656,14 @@ document.addEventListener('DOMContentLoaded', function () {
         { year: 2026, month: 1, day: 21, title: '最終結果発表', type: 'contest', remarks: '授賞式' },
     ];
     
-    // --- 時計機能 ---
+    // --- 時計機能 (PC/SP両対応) ---
     function updateClock() {
         const now = new Date();
         const timeString = now.toLocaleTimeString('ja-JP', { hour12: false });
-        document.getElementById('realtime-clock').textContent = timeString;
+        const pcClock = document.getElementById('realtime-clock');
+        const spClock = document.getElementById('realtime-clock-mobile');
+        if(pcClock) pcClock.textContent = timeString;
+        if(spClock) spClock.textContent = timeString;
     }
     setInterval(updateClock, 1000);
     updateClock();
@@ -758,7 +714,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 100);
     };
 
-    // --- カラージェネレーター (NEW) ---
+    // --- カラージェネレーター ---
     const colorPicker = document.getElementById('color-picker');
     const colorPreview = document.getElementById('color-preview');
     const hexCodeEl = document.getElementById('hex-code');
@@ -774,7 +730,6 @@ document.addEventListener('DOMContentLoaded', function () {
             colorPreview.style.backgroundColor = hex;
             hexCodeEl.textContent = hex;
             
-            // HEX to RGB conversion
             const r = parseInt(hex.slice(1, 3), 16);
             const g = parseInt(hex.slice(3, 5), 16);
             const b = parseInt(hex.slice(5, 7), 16);
@@ -786,15 +741,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (type === 'hex') text = hexCodeEl.textContent;
             if (type === 'rgb') text = rgbCodeEl.textContent;
             
-            // コピー実行
             const textarea = document.createElement('textarea');
             textarea.value = text;
             document.body.appendChild(textarea);
             textarea.select();
             document.execCommand('copy');
             document.body.removeChild(textarea);
-            
-            // 簡易アニメーションはCSSのgroup-hoverで対応済み
         }
     }
 
@@ -819,16 +771,16 @@ document.addEventListener('DOMContentLoaded', function () {
             todoEmpty.style.display = 'none';
             todos.forEach((todo, index) => {
                 const li = document.createElement('li');
-                li.className = `todo-item flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700 ${todo.completed ? 'completed' : ''}`;
+                li.className = `todo-item flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 ${todo.completed ? 'completed opacity-60' : ''}`;
                 li.innerHTML = `
-                    <div class="flex items-center gap-3 flex-1 cursor-pointer" onclick="toggleTodo(${index})">
-                        <div class="w-5 h-5 rounded border ${todo.completed ? 'bg-indigo-500 border-indigo-500 text-white' : 'border-slate-300 dark:border-slate-500'} flex items-center justify-center transition-colors">
-                            ${todo.completed ? '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                    <div class="flex items-center gap-4 flex-1 cursor-pointer" onclick="toggleTodo(${index})">
+                        <div class="w-6 h-6 rounded-lg border-2 ${todo.completed ? 'bg-brand-teal border-brand-teal text-white' : 'border-slate-300 dark:border-slate-600'} flex items-center justify-center transition-all duration-200">
+                            ${todo.completed ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
                         </div>
-                        <span class="text-sm font-medium ${todo.completed ? 'text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'} select-none">${todo.text}</span>
+                        <span class="text-base font-medium ${todo.completed ? 'text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'} select-none">${todo.text}</span>
                     </div>
-                    <button onclick="deleteTodo(${index})" class="text-slate-400 hover:text-red-500 p-1 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    <button onclick="deleteTodo(${index})" class="text-slate-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                 `;
                 todoList.appendChild(li);
@@ -864,7 +816,7 @@ document.addEventListener('DOMContentLoaded', function () {
     renderTodos();
 
 
-    // --- モーダル機能 (アニメーション改善) ---
+    // --- モーダル機能 ---
     const modal = document.getElementById('event-modal');
     const backdrop = document.getElementById('event-modal-backdrop');
     const modalContent = document.getElementById('event-modal-content');
@@ -875,13 +827,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openEventModal(eventData) {
         modalTitle.textContent = eventData.title;
-        modalDate.innerHTML = `<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>${eventData.year}年${eventData.month + 1}月${eventData.day}日`;
+        modalDate.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>${eventData.year}年${eventData.month + 1}月${eventData.day}日`;
         modalRemarks.textContent = eventData.remarks || '特記事項なし';
         
         modal.classList.remove('hidden');
         backdrop.classList.remove('hidden');
         
-        // アニメーション用クラス適用
         requestAnimationFrame(() => {
             backdrop.classList.remove('opacity-0');
             modalContent.classList.remove('scale-95', 'opacity-0');
@@ -897,7 +848,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => {
             modal.classList.add('hidden');
             backdrop.classList.add('hidden');
-        }, 300); // Transition duration matches CSS
+        }, 300);
     }
 
     closeModalBtn.addEventListener('click', closeModal);
@@ -974,16 +925,16 @@ document.addEventListener('DOMContentLoaded', function () {
         monthDiv.className = 'calendar-month flex-shrink-0 w-full p-4 md:p-6';
         const monthName = new Date(year, month).toLocaleString('ja-JP', { year: 'numeric', month: 'long' });
         
-        let html = `<div class="text-center mb-6"><h3 class="text-xl md:text-2xl font-bold text-slate-800 dark:text-white tracking-wider border-b-2 border-indigo-100 dark:border-indigo-800 inline-block pb-1">${monthName}</h3></div>`;
-        html += '<div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">';
+        let html = `<div class="text-center mb-6"><h3 class="text-2xl font-bold text-slate-800 dark:text-white tracking-wider">${monthName}</h3></div>`;
+        html += '<div class="overflow-hidden rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">';
         html += '<table class="w-full text-sm text-center border-collapse table-fixed bg-white dark:bg-dark-card">';
-        html += '<thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium"><tr class="h-10">';
+        html += '<thead class="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 font-bold"><tr class="h-12">';
         const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
         weekdays.forEach((day, i) => {
             let colorClass = '';
-            if (i === 0) colorClass = 'text-red-500 bg-red-50/50 dark:bg-red-900/20';
-            if (i === 6) colorClass = 'text-blue-500 bg-blue-50/50 dark:bg-blue-900/20';
-            html += `<th class="w-1/7 border-b border-r border-slate-200 dark:border-slate-700 last:border-r-0 ${colorClass}">${day}</th>`;
+            if (i === 0) colorClass = 'text-red-500';
+            if (i === 6) colorClass = 'text-blue-500';
+            html += `<th class="w-1/7 border-b border-r border-slate-100 dark:border-slate-800 last:border-r-0 ${colorClass}">${day}</th>`;
         });
         html += '</tr></thead><tbody class="text-slate-700 dark:text-slate-300">';
         
@@ -997,7 +948,7 @@ document.addEventListener('DOMContentLoaded', function () {
             html += '<tr>';
             for (let j = 0; j < 7; j++) {
                 if (i === 0 && j < firstDay || date > daysInMonth) {
-                    html += '<td class="border-b border-r border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30 h-24 md:h-28 align-top p-1"></td>';
+                    html += '<td class="border-b border-r border-slate-100 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-900/30 h-28 align-top p-1"></td>';
                 } else {
                     const currentDate = new Date(year, month, date);
                     currentDate.setHours(0, 0, 0, 0);
@@ -1010,29 +961,29 @@ document.addEventListener('DOMContentLoaded', function () {
                     const isHoliday = holiday || isSportsDay;
 
                     if (holiday) {
-                        holidayName = `<div class="text-[10px] text-red-500 font-medium truncate mt-0.5">${holiday.name}</div>`;
+                        holidayName = `<div class="text-[10px] text-red-500 font-bold truncate mt-0.5">${holiday.name}</div>`;
                     } else if (isSportsDay) {
-                        holidayName = `<div class="text-[10px] text-red-500 font-medium truncate mt-0.5">スポーツの日</div>`;
+                        holidayName = `<div class="text-[10px] text-red-500 font-bold truncate mt-0.5">スポーツの日</div>`;
                     }
                     
                     // 背景色
-                    if (isHoliday || dayOfWeek === 0) tdClass = 'bg-red-50/30 dark:bg-red-900/10';
-                    else if (dayOfWeek === 6) tdClass = 'bg-blue-50/30 dark:bg-blue-900/10';
+                    if (isHoliday || dayOfWeek === 0) tdClass = 'bg-red-50/10 dark:bg-red-900/10';
+                    else if (dayOfWeek === 6) tdClass = 'bg-blue-50/10 dark:bg-blue-900/10';
 
                     // 文字色
                     if (isPast) {
                         tdClass += ' past-day';
                         dateTextClass = 'text-slate-400 dark:text-slate-600';
                     } else {
-                        if (isHoliday || dayOfWeek === 0) dateTextClass = 'text-red-600 dark:text-red-400 font-medium';
-                        else if (dayOfWeek === 6) dateTextClass = 'text-blue-600 dark:text-blue-400 font-medium';
-                        else dateTextClass = 'text-slate-700 dark:text-slate-300';
+                        if (isHoliday || dayOfWeek === 0) dateTextClass = 'text-red-500 dark:text-red-400 font-bold';
+                        else if (dayOfWeek === 6) dateTextClass = 'text-blue-500 dark:text-blue-400 font-bold';
+                        else dateTextClass = 'text-slate-700 dark:text-slate-300 font-medium';
                     }
 
                     if (isToday) {
-                        dateDivClass = 'bg-indigo-600 rounded-full text-white shadow-md';
+                        dateDivClass = 'bg-brand-teal text-white shadow-md';
                         dateTextClass = 'text-white font-bold';
-                        tdClass = tdClass.replace('bg-red-50/30', '').replace('bg-blue-50/30', '') + ' bg-indigo-50/20 dark:bg-indigo-900/30';
+                        tdClass = tdClass.replace('bg-red-50/10', '').replace('bg-blue-50/10', '') + ' bg-brand-teal/10 dark:bg-brand-teal/20';
                     }
                     
                     const dayEvents = events.filter(e => e.year === year && e.month === month && e.day === date);
@@ -1060,15 +1011,15 @@ document.addEventListener('DOMContentLoaded', function () {
                                      >${e.title}</div>`;
                     }).join('');
 
-                    html += `<td class="border-b border-r border-slate-200 dark:border-slate-700 last:border-r-0 h-24 md:h-28 align-top p-1 transition-colors hover:bg-white dark:hover:bg-slate-800 ${tdClass}">
+                    html += `<td class="border-b border-r border-slate-100 dark:border-slate-800 last:border-r-0 h-28 align-top p-1 transition-colors hover:bg-white dark:hover:bg-slate-800 ${tdClass}">
                                 <div class="flex flex-col h-full">
-                                    <div class="flex justify-between items-start mb-1">
-                                        <div class="w-6 h-6 flex items-center justify-center ${dateDivClass} text-sm">
+                                    <div class="flex justify-between items-start mb-1 px-1">
+                                        <div class="w-7 h-7 flex items-center justify-center rounded-full ${dateDivClass} text-sm">
                                             <span class="${dateTextClass}">${date}</span>
                                         </div>
                                         ${holidayName}
                                     </div>
-                                    <div class="flex-grow overflow-y-auto space-y-0.5 custom-scrollbar">
+                                    <div class="flex-grow overflow-y-auto space-y-0.5 custom-scrollbar px-0.5">
                                         ${eventHtml}
                                     </div>
                                 </div>
@@ -1090,7 +1041,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let index = 0;
 
     while (calDate <= endDate) {
-        // 現在の月を記録
         if (calDate.getMonth() === today.getMonth() && calDate.getFullYear() === today.getFullYear()) {
             currentMonthIndex = index;
         }
@@ -1103,17 +1053,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const scrollMonth = () => calendarContainer.querySelector('.calendar-month').offsetWidth;
     
-    // スクロール操作
     nextButton.addEventListener('click', () => calendarContainer.scrollBy({ left: scrollMonth(), behavior: 'smooth' }));
     prevButton.addEventListener('click', () => calendarContainer.scrollBy({ left: -scrollMonth(), behavior: 'smooth' }));
     
-    // 今月へジャンプ
     currentButton.addEventListener('click', () => {
         const monthWidth = scrollMonth();
         calendarContainer.scrollTo({ left: monthWidth * currentMonthIndex, behavior: 'smooth' });
     });
     
-    // 初期表示で今月を表示
     setTimeout(() => {
         const monthWidth = scrollMonth();
         if (calendarContainer.scrollLeft === 0 && currentMonthIndex > 0) {
@@ -1138,10 +1085,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- 通知の期限管理 ---
     const renewalNotification = document.getElementById('renewal-notification');
     if (renewalNotification) {
-        // 表示開始日: 2025年12月8日
-        const startDate = new Date(2025, 11, 8); // 12月8日
+        const startDate = new Date(2025, 11, 8); 
         const expireDate = new Date(startDate);
-        expireDate.setDate(startDate.getDate() + 7); // 7日間
+        expireDate.setDate(startDate.getDate() + 7);
 
         const now = new Date();
         if (now > expireDate) {
@@ -1151,16 +1097,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- コピー機能（パスワード用） ---
     window.copyPassword = function(btn, text) {
-        window.copyText(btn, text); // 汎用関数を利用
-        
-        // アイコン変更とフィードバック
+        window.copyText(btn, text);
         const originalContent = btn.innerHTML;
-        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-600"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-        btn.classList.add('border-green-200', 'bg-green-50');
-        
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-teal"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
         setTimeout(() => {
             btn.innerHTML = originalContent;
-            btn.classList.remove('border-green-200', 'bg-green-50');
         }, 2000);
     };
 
