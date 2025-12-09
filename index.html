@@ -277,6 +277,27 @@
                     </div>
                 </div>
 
+                <!-- HP改善・バグ報告 (追加) -->
+                <div class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-card border-l-4 border-green-500 hover-card">
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider border border-green-200 dark:border-green-800">Feedback</span>
+                            <h3 class="font-bold text-slate-800 dark:text-white text-lg">HP改善・バグ報告</h3>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 font-medium">なにかアイデアやバグがあればコレに入れてください。</p>
+                        <div class="flex flex-wrap gap-3 mt-1">
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe4KbW5mQQ-IkXeLNCWCMlkHDpdLkCkay08A6X1EvFbjNoEYg/viewform?usp=header" target="_blank" class="flex items-center gap-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors text-sm font-bold shadow-md shadow-green-500/20 group">
+                                <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                フォームに入力
+                            </a>
+                            <a href="https://docs.google.com/spreadsheets/d/1n4ZSHqn7fsye8tMvatf0orqJIvPSCgzB4tFCH4KZZLE/edit?usp=sharing" target="_blank" class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 hover:border-green-200 dark:hover:border-green-500/50 transition-colors text-sm font-bold rounded-lg">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 011.414.586l5.414 5.414a1 1 0 01.586 1.414V19a2 2 0 01-2 2z"></path></svg>
+                                回答シートを確認
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 重要通知 -->
                 <div class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-card border-l-4 border-yellow-400 hover-card">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -552,11 +573,33 @@
             </div>
             
             <div class="bg-white dark:bg-dark-card rounded-3xl shadow-soft border border-slate-100 dark:border-slate-700 p-6 md:p-8">
-                <div class="flex gap-3 mb-6">
-                    <input type="text" id="todo-input" class="flex-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition-all" placeholder="新しいタスクを追加...">
-                    <button id="add-todo-btn" class="bg-brand-teal hover:bg-brand-cyan text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg shadow-brand-teal/20">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    </button>
+                <!-- 入力エリア (拡張) -->
+                <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 mb-6 border border-slate-200 dark:border-slate-700">
+                    <div class="flex flex-col gap-3">
+                        <!-- タスク名入力 -->
+                        <input type="text" id="todo-input" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition-all placeholder:text-slate-400" placeholder="タスクを入力...">
+                        
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <!-- リンク入力 -->
+                            <div class="relative flex-1">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                </div>
+                                <input type="url" id="todo-link" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition-all placeholder:text-slate-400" placeholder="URL (https://...)">
+                            </div>
+                            
+                            <!-- 日付入力 -->
+                            <div class="relative sm:w-40">
+                                <input type="date" id="todo-date" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition-all">
+                            </div>
+
+                            <!-- 追加ボタン -->
+                            <button id="add-todo-btn" class="bg-brand-teal hover:bg-brand-cyan text-white px-6 py-2.5 rounded-xl font-bold transition-colors shadow-lg shadow-brand-teal/20 flex items-center justify-center gap-2 sm:w-auto w-full">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                <span class="sm:hidden">追加</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
                 <ul id="todo-list" class="space-y-3">
@@ -644,7 +687,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { year: 2025, month: 10, day: 13, title: 'ドメイン名の登録締切', type: 'contest', remarks: '厳守' },
         { year: 2025, month: 10, day: 20, title: 'ストリーミングサーバーの利用クローズ', type: 'contest', remarks: '' },
         { year: 2025, month: 10, day: 20, title: '作品の提出締切', type: 'contest', remarks: '厳守' },
-        { year: 2025, month: 11, day: 10, title: 'トップ50およびセミファイナリスト発表', type: 'contest', remarks: '予定' },
+        { year: 2025, month: 11, day: 10, title: 'トップ50およびセミファイナリスト発表', type: 'contest', remarks: '16:00 発表予定' },
         { year: 2025, month: 11, day: 27, title: '改良した作品・サイトプロフィール再提出の締切', type: 'contest', remarks: '厳守' },
         { year: 2025, month: 11, day: 27, title: 'ベストドメインネーミング賞応募締切', type: 'contest', remarks: 'レポート提出' },
         { year: 2026, month: 0, day: 24, title: 'ベストクリエイティブ賞 作品提出締切', type: 'contest', remarks: 'CM動画部門' },
@@ -752,6 +795,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- ToDoリスト ---
     const todoInput = document.getElementById('todo-input');
+    const todoLinkInput = document.getElementById('todo-link'); // 追加
+    const todoDateInput = document.getElementById('todo-date'); // 追加
     const addTodoBtn = document.getElementById('add-todo-btn');
     const todoList = document.getElementById('todo-list');
     const todoEmpty = document.getElementById('todo-empty');
@@ -771,15 +816,55 @@ document.addEventListener('DOMContentLoaded', function () {
             todoEmpty.style.display = 'none';
             todos.forEach((todo, index) => {
                 const li = document.createElement('li');
-                li.className = `todo-item flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 ${todo.completed ? 'completed opacity-60' : ''}`;
+                li.className = `todo-item group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all ${todo.completed ? 'completed opacity-60' : ''}`;
+                
+                // リンクボタンのHTML生成
+                let linkHtml = '';
+                if (todo.link) {
+                    linkHtml = `
+                        <a href="${todo.link}" target="_blank" class="flex items-center gap-1 text-xs font-bold text-brand-blue bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors ml-0 sm:ml-2 mt-2 sm:mt-0 w-fit" title="${todo.link}" onclick="event.stopPropagation()">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            Link
+                        </a>
+                    `;
+                }
+
+                // 日付バッジのHTML生成
+                let dateHtml = '';
+                if (todo.date) {
+                    const dateObj = new Date(todo.date);
+                    const formattedDate = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+                    
+                    // 期限切れチェック (簡易的)
+                    const today = new Date();
+                    today.setHours(0,0,0,0);
+                    const isOverdue = dateObj < today && !todo.completed;
+                    const dateColorClass = isOverdue 
+                        ? 'text-red-600 bg-red-50 border-red-100 dark:text-red-400 dark:bg-red-900/30 dark:border-red-900/50' 
+                        : 'text-slate-500 bg-slate-100 border-slate-200 dark:text-slate-400 dark:bg-slate-800 dark:border-slate-700';
+
+                    dateHtml = `
+                        <span class="flex items-center gap-1 text-xs font-mono px-2 py-1 rounded-md border ${dateColorClass} ml-0 sm:ml-2 mt-2 sm:mt-0 w-fit">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            ${formattedDate}
+                        </span>
+                    `;
+                }
+
                 li.innerHTML = `
-                    <div class="flex items-center gap-4 flex-1 cursor-pointer" onclick="toggleTodo(${index})">
-                        <div class="w-6 h-6 rounded-lg border-2 ${todo.completed ? 'bg-brand-teal border-brand-teal text-white' : 'border-slate-300 dark:border-slate-600'} flex items-center justify-center transition-all duration-200">
-                            ${todo.completed ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                    <div class="flex items-start gap-3 flex-1 cursor-pointer w-full" onclick="toggleTodo(${index})">
+                        <div class="w-5 h-5 mt-0.5 rounded-md border-2 ${todo.completed ? 'bg-brand-teal border-brand-teal text-white' : 'border-slate-300 dark:border-slate-600'} flex shrink-0 items-center justify-center transition-all duration-200">
+                            ${todo.completed ? '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
                         </div>
-                        <span class="text-base font-medium ${todo.completed ? 'text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'} select-none">${todo.text}</span>
+                        <div class="flex flex-col sm:flex-row sm:items-center flex-wrap gap-1 w-full">
+                            <span class="text-base font-medium ${todo.completed ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-700 dark:text-slate-200'} break-all">${todo.text}</span>
+                            <div class="flex flex-wrap items-center gap-2">
+                                ${dateHtml}
+                                ${linkHtml}
+                            </div>
+                        </div>
                     </div>
-                    <button onclick="deleteTodo(${index})" class="text-slate-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                    <button onclick="deleteTodo(${index})" class="text-slate-300 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all absolute top-2 right-2 sm:static sm:opacity-0 sm:group-hover:opacity-100">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                 `;
@@ -800,9 +885,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     addTodoBtn.addEventListener('click', () => {
         const text = todoInput.value.trim();
+        const link = todoLinkInput.value.trim();
+        const date = todoDateInput.value;
+
         if (text) {
-            todos.push({ text: text, completed: false });
+            todos.push({ 
+                text: text, 
+                link: link, 
+                date: date,
+                completed: false 
+            });
             todoInput.value = '';
+            todoLinkInput.value = '';
+            todoDateInput.value = '';
             saveTodos();
         }
     });
